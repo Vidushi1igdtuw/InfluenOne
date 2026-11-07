@@ -22,8 +22,6 @@ KNOWN_ACTIONS = {
 }
 
 
-ASI_ONE_CHAT_URL = "https://asi1.ai/ai/agent1q2yfrx8tg5mynwjcy2ferlkhhw2qq9rdxrplqj6ck4hrravv32dxz9pw4hp"
-
 
 def menu_card() -> dict[str, Any]:
     return {
@@ -31,7 +29,6 @@ def menu_card() -> dict[str, Any]:
         "summary_rows": [
             {"label": "Model", "value": "ASI:One"},
             {"label": "Pay", "value": "$4.99 only after your draft"},
-            {"label": "Chat", "value": ASI_ONE_CHAT_URL},
         ],
         "ctas": [
             {

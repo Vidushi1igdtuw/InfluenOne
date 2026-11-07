@@ -9,6 +9,8 @@ import { CreditCard, CheckCircle2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import api from '@/lib/api'
 
+import type { StripeVerifyResult } from '@/contexts/PaymentContext'
+
 interface PaymentModalProps {
   service: ServiceKey
   serviceName: string
@@ -24,7 +26,7 @@ export function PaymentModal({
   onCancel,
   onServiceCall,
 }: PaymentModalProps) {
-  const { refreshPaymentStatus } = usePayment()
+  const { verifyStripeReturn } = usePayment()
   const [config, setConfig] = useState<PaymentConfig | null>(null)
   const [method, setMethod] = useState<'pay' | 'success'>('pay')
   const [processing, setProcessing] = useState(false)
@@ -34,28 +36,36 @@ export function PaymentModal({
     api.get('/api/payment/config').then(({ data }) => setConfig(data)).catch(() => setConfig(null))
   }, [])
 
+  // Stripe redirects back to this page with ?stripe_session=... — verify the
+  // session via the shared context helper (deduped with the provider-level
+  // auto-verify, so the session is never verified twice).
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const params = new URLSearchParams(window.location.search)
-    const session = params.get('stripe_session')
-    const svc = (params.get('service') as ServiceKey) || service
-    if (!session) return
+    let cancelled = false
     ;(async () => {
-      setProcessing(true)
+      let result: StripeVerifyResult
       try {
-        const { data } = await api.post('/api/payment/stripe/verify', { session_id: session, service: svc })
-        if (!data.success) throw new Error(data.error || 'Stripe verification failed')
-        setTxHash(data.tx_hash || session)
+        result = await verifyStripeReturn()
+      } catch {
+        return
+      }
+      if (cancelled) return
+      if (result.verified) {
+        setTxHash(result.txHash)
         setMethod('success')
-        await refreshPaymentStatus()
-        await onServiceCall()
-        onSuccess(data.tx_hash || session)
-      } catch (error: any) {
-        toast.error(error?.message || 'Card payment could not be verified')
-        setProcessing(false)
+        try {
+          await onServiceCall()
+          onSuccess(result.txHash || '')
+        } catch {
+          /* service call failures are surfaced by the caller */
+        }
+      } else if (result.error) {
+        toast.error(result.error)
       }
     })()
-  }, [service, onServiceCall, onSuccess, refreshPaymentStatus])
+    return () => {
+      cancelled = true
+    }
+  }, [verifyStripeReturn, onServiceCall, onSuccess])
 
   const payStripe = async () => {
     setProcessing(true)

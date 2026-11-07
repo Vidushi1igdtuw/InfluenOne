@@ -47,18 +47,39 @@ NATURAL_CHAT_SYSTEM = (
     "Small talk, feature questions, pricing and help are free."
 )
 
-GREETINGS = {
-    "hi", "hii", "hiii", "hey", "heyy", "hello", "helo",
-    "namaste", "namaskar", "help", "menu", "start",
-}
+# Hard-coded card menus are gone (veo3-agent style): greetings/small talk go to
+# natural ASI:One chat; only an explicit "menu" request shows the menu card.
+_MENU_WORDS = {"menu", "start"}
 
-_CREATE_VERBS = r"(?:write|create|make|generate|draft|compose|banao|likho|bana)"
-GENERATE_INTENT_RE = re.compile(
-    rf"\bpost\b.{{0,60}}?\b{_CREATE_VERBS}\b"
-    rf"|\b{_CREATE_VERBS}\b.{{0,60}}?\bpost\b"
-    rf"|\b(?:bana|likh)\b.{{0,40}}?\bpost\b",
-    re.IGNORECASE,
-)
+_TOPIC_PATTERNS = [
+    # "write a post about remote work" / "generate LinkedIn post: AI agents"
+    re.compile(
+        r"^\s*(?:please\s+|can\s+you\s+|could\s+you\s+|mujhe\s+|muje\s+|ek\s+)?"
+        r"(?:write|create|make|generate|draft|compose|banao|likho)\s+"
+        r"(?:a\s+|an\s+|me\s+a\s+|ek\s+)?(?:linkedin\s+|li\s+)?post\s*"
+        r"(?:about|on|for|regarding|ke\s+baare\s+(?:me|mein)|par|pe)?\s*[:\-—]?\s*",
+        re.IGNORECASE,
+    ),
+    # Hinglish: "AI agents par post banao" / "remote work post likho"
+    re.compile(
+        r"^\s*(?:mujhe\s+|muje\s+|ek\s+)?(.{3,200}?)\s+"
+        r"(?:post|linkedin\s+post)\s+(?:banao|bana|likho|likh\s*do|chahiye)\s*[.!]?\s*$",
+        re.IGNORECASE,
+    ),
+]
+
+
+def _extract_topic(text: str) -> str:
+    """Pull the topic out of a direct 'write a post about X' request."""
+    plain = strip_mention_prefix(text).strip()
+    m = _TOPIC_PATTERNS[0].match(plain)
+    if m:
+        topic = plain[m.end():].strip(" \"'.,!?:-—")
+        return topic[:400]
+    m = _TOPIC_PATTERNS[1].match(plain)
+    if m:
+        return m.group(1).strip(" \"'.,!?")[:400]
+    return ""
 
 _fulfill: Optional[Callable] = None
 
@@ -265,8 +286,10 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
         sel = normalize_card_selection(text, KNOWN_ACTIONS)
         action = str(sel.get("action") or "").strip()
 
+        # Menu card ONLY on explicit request. Greetings/small talk flow to
+        # natural chat below — never a hard-coded card.
         plain = strip_mention_prefix(text).lower().rstrip("!.,? ")
-        if action in {"menu", "hello", "hi", "start"} or plain in GREETINGS:
+        if action == "menu" or plain in _MENU_WORDS:
             await send_menu(ctx, sender)
             return
 
@@ -345,15 +368,10 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
         if looks_url:
             await _run_url(ctx, sender, text, "en")
             return
-        # Explicit "write a post about X" intent → open the generate form (free).
-        if GENERATE_INTENT_RE.search(text):
-            await send_card(
-                ctx,
-                sender,
-                "Great topic! Confirm or edit it in the form — ASI:One writes the post first; you only pay after you see it.",
-                card_kind="form",
-                card_payload=generate_form(),
-            )
+        # "write a post about X" → generate DIRECTLY (generate first, pay after).
+        topic = _extract_topic(text)
+        if topic:
+            await _run_generate(ctx, sender, topic, "en")
             return
         # Plain text → natural conversation. Free — no payment gate.
         await _natural_chat(ctx, sender, text)
