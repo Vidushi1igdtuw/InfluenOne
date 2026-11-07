@@ -103,9 +103,10 @@ export default function CreatePostPage() {
     setShowPayment(true)
   }
 
-  const handlePaymentSuccess = async (txHash: string) => {
+  // The service itself is run by PaymentModal via onServiceCall — onSuccess
+  // only closes the modal so the action never executes twice.
+  const handlePaymentSuccess = async (_txHash: string) => {
     setShowPayment(false)
-    await executePost()
   }
 
   const handlePaymentCancel = () => {

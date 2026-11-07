@@ -1199,9 +1199,10 @@ export default function AIGeneratorPage() {
           <PaymentModal
             service="linkedin_post"
             serviceName="LinkedIn Post"
-            onSuccess={async (txHash: string) => {
+            // The service itself is run by PaymentModal via onServiceCall —
+            // onSuccess only closes the modal so the action never executes twice.
+            onSuccess={async (_txHash: string) => {
               setShowPostPayment(false)
-              await executePost()
             }}
             onCancel={() => setShowPostPayment(false)}
             onServiceCall={executePost}

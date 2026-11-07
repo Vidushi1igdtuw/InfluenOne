@@ -320,12 +320,10 @@ export default function TemplatesPage() {
           <PaymentModal
             service="templates"
             serviceName="Create Template"
-            onSuccess={async (txHash: string) => {
+            // The service itself is run by PaymentModal via onServiceCall —
+            // onSuccess only closes the modal so the action never executes twice.
+            onSuccess={async (_txHash: string) => {
               setShowPayment(false)
-              await executeCreateTemplate()
-              setShowCreate(false)
-              setFormData({ name: '', content: '', description: '' })
-              loadTemplates()
             }}
             onCancel={() => setShowPayment(false)}
             onServiceCall={async () => {
