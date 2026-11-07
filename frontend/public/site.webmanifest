@@ -1,0 +1,16 @@
+{
+  "name": "InfluenOne — ASI:One for LinkedIn influencers",
+  "short_name": "InfluenOne",
+  "description": "ASI:One ghostwriter for LinkedIn influencers. Generate, schedule, and post. Pay with Stripe or FET. Built for Fetch.ai Innovation Lab Stranger Builds.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5F43F1",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
