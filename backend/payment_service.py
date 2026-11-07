@@ -56,7 +56,16 @@ class PaymentService:
             )
             if row.data:
                 remaining = int(row.data[0].get("remaining") or 0)
-                return {"remaining": remaining, "pack_size": pack, "has_paid": remaining > 0}
+                total_granted = int(row.data[0].get("total_granted") or 0)
+                # has_paid means "has EVER paid". A used-up pack must NOT flip
+                # has_paid back to false — that made the dashboard re-lock and
+                # demand payment again for every service after the 10 uses
+                # were consumed. Out-of-credits is surfaced via `remaining`.
+                return {
+                    "remaining": remaining,
+                    "pack_size": pack,
+                    "has_paid": remaining > 0 or total_granted > 0,
+                }
             paid = (
                 self.supabase_admin.table("payments")
                 .select("id,created_at,tx_hash,amount,service")
@@ -71,6 +80,21 @@ class PaymentService:
                 return {"remaining": pack, "pack_size": pack, "has_paid": True}
             return {"remaining": 0, "pack_size": pack, "has_paid": False}
         except Exception as e:  # noqa: BLE001
+            # A transient DB error must never report "never paid" — that would
+            # re-lock the dashboard. Self-heal from the payments table first.
+            try:
+                healed = (
+                    self.supabase_admin.table("payments")
+                    .select("id")
+                    .eq("user_id", user_id)
+                    .eq("status", "verified")
+                    .limit(1)
+                    .execute()
+                )
+                if healed.data:
+                    return {"remaining": 0, "pack_size": pack, "has_paid": True, "error": str(e)}
+            except Exception:  # noqa: BLE001
+                pass
             return {"remaining": 0, "pack_size": pack, "has_paid": False, "error": str(e)}
 
     async def grant_credits(self, user_id: str, amount: int | None = None) -> Dict:
@@ -155,19 +179,19 @@ class PaymentService:
         credits = await self.get_credit_status(user_id)
         remaining = int(credits.get("remaining") or 0)
         pack = credits.get("pack_size") or pack_uses_for(user_id)
-        if remaining > 0:
-            return {
-                "has_paid": True,
-                "credits_remaining": remaining,
-                "pack_size": pack,
-                "service": service,
-            }
-        return {
-            "has_paid": False,
-            "credits_remaining": 0,
+        # has_paid = "ever paid" (verified payment exists or credits were
+        # granted before). Exhausted credits are reported via credits_remaining
+        # so the dashboard gate never re-locks after a successful purchase;
+        # individual services still stop when remaining == 0.
+        result = {
+            "has_paid": bool(credits.get("has_paid")),
+            "credits_remaining": remaining,
             "pack_size": pack,
-            "error": credits.get("error"),
+            "service": service,
         }
+        if credits.get("error"):
+            result["error"] = credits["error"]
+        return result
 
     async def record_payment(self, user_id: str, tx_hash: str, amount: str, service: str = "dashboard_access") -> Dict:
         if not self.supabase_admin:
