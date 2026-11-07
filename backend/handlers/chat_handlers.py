@@ -17,6 +17,7 @@ from uagents_core.contrib.protocols.chat import (
     ChatAcknowledgement,
     ChatMessage,
     EndSessionContent,
+    ResourceContent,
     StartSessionContent,
     TextContent,
 )
@@ -229,111 +230,133 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
             except Exception:
                 pass
 
+        # ASI:One often sends StartSessionContent + TextContent in ONE message.
+        # Never return early on StartSession — capture the first text instead
+        # (same flow as the veo3-agent reference). Only a PURE session-open
+        # (StartSession with no text and no resource) gets the menu card.
+        text_content = None
+        had_start_session = False
+        has_resource = False
         for item in msg.content:
             if isinstance(item, StartSessionContent):
-                await send_menu(ctx, sender)
-                return
+                had_start_session = True
+                continue
             if isinstance(item, EndSessionContent):
                 return
-            if not isinstance(item, TextContent):
+            if isinstance(item, ResourceContent):
+                has_resource = True
                 continue
+            if isinstance(item, TextContent) and text_content is None:
+                text_content = item
 
-            text = (item.text or "").strip()
-            sel = normalize_card_selection(text, KNOWN_ACTIONS)
-            action = str(sel.get("action") or "").strip()
+        if had_start_session and text_content is None and not has_resource:
+            await send_menu(ctx, sender)
+            return
 
-            plain = strip_mention_prefix(text).lower().rstrip("!.,? ")
-            if action in {"menu", "hello", "hi", "start"} or plain in GREETINGS:
+        if text_content is None:
+            return
+
+        text = (text_content.text or "").strip()
+        if not text:
+            if had_start_session:
                 await send_menu(ctx, sender)
-                return
+            return
 
-            if action == "generate_post":
+        sel = normalize_card_selection(text, KNOWN_ACTIONS)
+        action = str(sel.get("action") or "").strip()
+
+        plain = strip_mention_prefix(text).lower().rstrip("!.,? ")
+        if action in {"menu", "hello", "hi", "start"} or plain in GREETINGS:
+            await send_menu(ctx, sender)
+            return
+
+        if action == "generate_post":
+            await send_card(
+                ctx,
+                sender,
+                "Tell me the topic. ASI:One writes the post.",
+                card_kind="form",
+                card_payload=generate_form(),
+            )
+            return
+
+        if action == "url_to_post":
+            await send_card(
+                ctx,
+                sender,
+                "Paste an article URL. ASI:One turns it into a LinkedIn post.",
+                card_kind="form",
+                card_payload=url_form(),
+            )
+            return
+
+        if action == "pay":
+            stash_pending(ctx, sender, "pay")
+            await request_stripe_payment(ctx, sender)
+            return
+
+        # Generate FIRST — payment is settled after the draft is delivered.
+        if action == "submit_generate":
+            topic = str(sel.get("topic") or "").strip()
+            language = str(sel.get("language") or "en")
+            if not topic:
+                await ctx.send(sender, create_text_chat("Need a topic to generate."))
+                return
+            await _run_generate(ctx, sender, topic, language)
+            return
+
+        if action == "submit_url":
+            url = str(sel.get("url") or "").strip()
+            language = str(sel.get("language") or "en")
+            if not url:
+                await ctx.send(sender, create_text_chat("Need a URL."))
+                return
+            await _run_url(ctx, sender, url, language)
+            return
+
+        if action == "regenerate":
+            topic = str(ctx.storage.get(f"topic:{sender}:{session_id}") or "")
+            if not topic:
                 await send_card(
                     ctx,
                     sender,
-                    "Tell me the topic. ASI:One writes the post.",
+                    "Pick a new topic.",
                     card_kind="form",
                     card_payload=generate_form(),
                 )
                 return
+            await _run_generate(ctx, sender, topic, "en")
+            return
 
-            if action == "url_to_post":
-                await send_card(
-                    ctx,
-                    sender,
-                    "Paste an article URL. ASI:One turns it into a LinkedIn post.",
-                    card_kind="form",
-                    card_payload=url_form(),
-                )
-                return
+        if action == "approve_post":
+            await send_menu(
+                ctx,
+                sender,
+                "Draft saved. Connect LinkedIn on the website to publish, or ask me for another post.",
+            )
+            return
 
-            if action == "pay":
-                stash_pending(ctx, sender, "pay")
-                await request_stripe_payment(ctx, sender)
-                return
+        if text.lower() in {"paid", "payment done"}:
+            await request_stripe_payment(ctx, sender)
+            return
 
-            # Generate FIRST — payment is settled after the draft is delivered.
-            if action == "submit_generate":
-                topic = str(sel.get("topic") or "").strip()
-                language = str(sel.get("language") or "en")
-                if not topic:
-                    await ctx.send(sender, create_text_chat("Need a topic to generate."))
-                    return
-                await _run_generate(ctx, sender, topic, language)
-                return
-
-            if action == "submit_url":
-                url = str(sel.get("url") or "").strip()
-                language = str(sel.get("language") or "en")
-                if not url:
-                    await ctx.send(sender, create_text_chat("Need a URL."))
-                    return
-                await _run_url(ctx, sender, url, language)
-                return
-
-            if action == "regenerate":
-                topic = str(ctx.storage.get(f"topic:{sender}:{session_id}") or "")
-                if not topic:
-                    await send_card(
-                        ctx,
-                        sender,
-                        "Pick a new topic.",
-                        card_kind="form",
-                        card_payload=generate_form(),
-                    )
-                    return
-                await _run_generate(ctx, sender, topic, "en")
-                return
-
-            if action == "approve_post":
-                await send_menu(
-                    ctx,
-                    sender,
-                    "Draft saved. Connect LinkedIn on the website to publish, or ask me for another post.",
-                )
-                return
-
-            if text.lower() in {"paid", "payment done"}:
-                await request_stripe_payment(ctx, sender)
-                return
-
-            looks_url = text.lower().startswith("http://") or text.lower().startswith("https://")
-            # URL → URL-to-post flow. Generate first; payment comes after delivery.
-            if looks_url:
-                await _run_url(ctx, sender, text, "en")
-                return
-            # Explicit "write a post about X" intent → open the generate form (free).
-            if GENERATE_INTENT_RE.search(text):
-                await send_card(
-                    ctx,
-                    sender,
-                    "Great topic! Confirm or edit it in the form — ASI:One writes the post first; you only pay after you see it.",
-                    card_kind="form",
-                    card_payload=generate_form(),
-                )
-                return
-            # Plain text → natural conversation. Free — no payment gate.
-            await _natural_chat(ctx, sender, text)
+        looks_url = text.lower().startswith("http://") or text.lower().startswith("https://")
+        # URL → URL-to-post flow. Generate first; payment comes after delivery.
+        if looks_url:
+            await _run_url(ctx, sender, text, "en")
+            return
+        # Explicit "write a post about X" intent → open the generate form (free).
+        if GENERATE_INTENT_RE.search(text):
+            await send_card(
+                ctx,
+                sender,
+                "Great topic! Confirm or edit it in the form — ASI:One writes the post first; you only pay after you see it.",
+                card_kind="form",
+                card_payload=generate_form(),
+            )
+            return
+        # Plain text → natural conversation. Free — no payment gate.
+        await _natural_chat(ctx, sender, text)
 
     @chat_proto.on_message(ChatAcknowledgement)
     async def handle_ack(ctx: Context, sender: str, msg: ChatAcknowledgement):
