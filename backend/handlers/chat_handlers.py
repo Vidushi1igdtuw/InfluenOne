@@ -1,8 +1,13 @@
-"""ASI:One chat: interactive cards + Stripe Payment Protocol (1 use / card)."""
+"""ASI:One chat: interactive cards + Stripe Payment Protocol.
+
+Flow: free chat → topic/URL card → generate post FIRST → LinkedIn connect →
+payment LAST (only when the user has no remaining uses and has not just paid).
+"""
 
 from __future__ import annotations
 
 import json
+import os
 import re
 from datetime import datetime
 from typing import Callable, Optional
@@ -34,8 +39,10 @@ NATURAL_CHAT_SYSTEM = (
     "You are InfluenOne, a LinkedIn content-automation agent on ASI:One. "
     "Reply naturally, warmly and concisely in the user's own language (English, Hindi or Hinglish). "
     "You help creators turn a topic or an article URL into a LinkedIn post with a graphic. "
-    "Post creation costs $4.99 per post (Stripe) and happens through the Generate post / URL to "
-    "post buttons — never write the full post in chat; invite the user to tap those buttons. "
+    "Flow: chat freely first — when the user wants a post, invite them to tap the Generate post / "
+    "URL to post buttons (or paste a URL). The post is generated FIRST; payment ($4.99, Stripe) "
+    "is only requested AFTER the draft is delivered, and only when no uses remain. Never demand "
+    "payment before a draft exists. Never write the full post in chat. "
     "Small talk, feature questions, pricing and help are free."
 )
 
@@ -70,7 +77,6 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
         sender: str,
         body: str,
         *,
-        paid: bool,
         topic: str = "",
         image_url: str = "",
     ) -> None:
@@ -86,8 +92,31 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
             sender,
             narration,
             card_kind="review",
-            card_payload=post_review(body, paid=True),
+            card_payload=post_review(body),
         )
+
+    async def _after_post(ctx: Context, sender: str) -> None:
+        """Post-delivery steps: LinkedIn connect guidance, then payment LAST —
+        and only when the user has no uses left and has not just paid."""
+        frontend = os.getenv("FRONTEND_URL", "https://frontend-production-2e733.up.railway.app").rstrip("/")
+        await ctx.send(
+            sender,
+            create_text_chat(
+                f"Next step: connect your LinkedIn account on the website to publish — {frontend}/dashboard"
+            ),
+        )
+        if not payment_service:
+            return
+        session_id = str(ctx.session)
+        if bool(ctx.storage.get(f"paid:{sender}:{session_id}")):
+            return  # just paid this session — never charge twice
+        need = await payment_service.require_credit(sender)
+        if need:
+            await ctx.send(
+                sender,
+                create_text_chat("You have no uses left. Pay once with the card below to keep generating."),
+            )
+            await request_stripe_payment(ctx, sender)
 
     async def _run_generate(ctx: Context, sender: str, topic: str, language: str) -> None:
         await ctx.send(sender, create_text_chat("Writing your LinkedIn post with ASI:One and a graphic. This can take a minute…"))
@@ -95,17 +124,21 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
         if result.get("has_error") or result.get("error"):
             await ctx.send(sender, create_text_chat(result.get("error") or "Generation failed."))
             return
+        # Generate FIRST. Consume a use best-effort (dashboard payment = main payment);
+        # never block the draft on payment.
         if payment_service:
-            await payment_service.consume_credit(sender, "asi1_generate")
-            ctx.storage.set(f"paid:{sender}:{str(ctx.session)}", False)
+            try:
+                await payment_service.consume_credit(sender, "asi1_generate")
+            except Exception:
+                pass
         await _deliver_post(
             ctx,
             sender,
             result.get("text") or "",
-            paid=True,
             topic=topic,
             image_url=str(result.get("image_url") or ""),
         )
+        await _after_post(ctx, sender)
 
     async def _run_url(ctx: Context, sender: str, url: str, language: str) -> None:
         await ctx.send(sender, create_text_chat("Reading the page, searching the live web, and writing a post with a graphic…"))
@@ -114,21 +147,17 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
             await ctx.send(sender, create_text_chat(str(result["error"])))
             return
         if payment_service:
-            await payment_service.consume_credit(sender, "asi1_url")
-            ctx.storage.set(f"paid:{sender}:{str(ctx.session)}", False)
+            try:
+                await payment_service.consume_credit(sender, "asi1_url")
+            except Exception:
+                pass
         await _deliver_post(
             ctx,
             sender,
             result.get("text") or "",
-            paid=True,
             image_url=str(result.get("image_url") or ""),
         )
-
-    async def _need_pay(ctx: Context, sender: str, paid: bool) -> bool:
-        if not payment_service or paid:
-            return False
-        need = await payment_service.require_credit(sender)
-        return bool(need)
+        await _after_post(ctx, sender)
 
     async def fulfill(ctx: Context, sender: str) -> None:
         pending = pop_pending(ctx, sender)
@@ -140,7 +169,7 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
         if action == "submit_url" and pending.get("url"):
             await _run_url(ctx, sender, pending["url"], language)
             return
-        await send_menu(ctx, sender, "Payment confirmed. 1 ASI:One use unlocked.")
+        await send_menu(ctx, sender, "Payment confirmed — you're covered. Send a topic or URL and I'll write the post.")
 
     _fulfill = fulfill
 
@@ -243,15 +272,12 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
                 await request_stripe_payment(ctx, sender)
                 return
 
+            # Generate FIRST — payment is settled after the draft is delivered.
             if action == "submit_generate":
                 topic = str(sel.get("topic") or "").strip()
                 language = str(sel.get("language") or "en")
                 if not topic:
                     await ctx.send(sender, create_text_chat("Need a topic to generate."))
-                    return
-                if await _need_pay(ctx, sender, paid):
-                    stash_pending(ctx, sender, "submit_generate", topic=topic, language=language)
-                    await request_stripe_payment(ctx, sender, service="asi1_generate")
                     return
                 await _run_generate(ctx, sender, topic, language)
                 return
@@ -261,10 +287,6 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
                 language = str(sel.get("language") or "en")
                 if not url:
                     await ctx.send(sender, create_text_chat("Need a URL."))
-                    return
-                if await _need_pay(ctx, sender, paid):
-                    stash_pending(ctx, sender, "submit_url", url=url, language=language)
-                    await request_stripe_payment(ctx, sender, service="asi1_url")
                     return
                 await _run_url(ctx, sender, url, language)
                 return
@@ -280,15 +302,15 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
                         card_payload=generate_form(),
                     )
                     return
-                if await _need_pay(ctx, sender, paid):
-                    stash_pending(ctx, sender, "submit_generate", topic=topic, language="en")
-                    await request_stripe_payment(ctx, sender, service="asi1_generate")
-                    return
                 await _run_generate(ctx, sender, topic, "en")
                 return
 
             if action == "approve_post":
-                await send_menu(ctx, sender, "Draft saved. Open the website to publish to LinkedIn.")
+                await send_menu(
+                    ctx,
+                    sender,
+                    "Draft saved. Connect LinkedIn on the website to publish, or ask me for another post.",
+                )
                 return
 
             if text.lower() in {"paid", "payment done"}:
@@ -296,21 +318,16 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
                 return
 
             looks_url = text.lower().startswith("http://") or text.lower().startswith("https://")
-            # URL → URL-to-post flow (post creation, so payment applies).
+            # URL → URL-to-post flow. Generate first; payment comes after delivery.
             if looks_url:
-                if await _need_pay(ctx, sender, paid):
-                    stash_pending(ctx, sender, "submit_url", url=text, language="en")
-                    await request_stripe_payment(ctx, sender, service="asi1_url")
-                    return
                 await _run_url(ctx, sender, text, "en")
                 return
             # Explicit "write a post about X" intent → open the generate form (free).
-            # Payment is only requested when the form is actually submitted.
             if GENERATE_INTENT_RE.search(text):
                 await send_card(
                     ctx,
                     sender,
-                    "Great topic! Confirm or edit it in the form — ASI:One writes the post ($4.99, charged on submit).",
+                    "Great topic! Confirm or edit it in the form — ASI:One writes the post first; you only pay after you see it.",
                     card_kind="form",
                     card_payload=generate_form(),
                 )

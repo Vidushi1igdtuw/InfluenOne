@@ -26,7 +26,7 @@ from payments.stripe_embedded import (
     is_stripe_configured,
     verify_checkout_session_paid,
 )
-from utils.constants import STRIPE_AMOUNT_USD
+from utils.constants import STRIPE_AMOUNT_USD, pack_uses_for
 
 payment_proto = Protocol(spec=payment_protocol_spec, role="seller")
 
@@ -144,7 +144,9 @@ async def handle_commit(ctx: Context, sender: str, msg: CommitPayment):
 
     amount = str(result.get("amount") or _amount_str())
     await ctx.send(sender, CompletePayment(transaction_id=tx_id or checkout_id))
+    # Mark paid BEFORE any bookkeeping so this session can never be charged again.
     ctx.storage.set(f"paid:{sender}:{session_id}", True)
+    ctx.storage.set(f"ever_paid:{sender}", True)  # survives new chat sessions
     try:
         from supabase import create_client
 
@@ -154,7 +156,14 @@ async def handle_commit(ctx: Context, sender: str, msg: CommitPayment):
         key = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_KEY") or ""
         client = create_client(url, key) if url and key else None
         svc = PaymentService(client, client)
-        await svc.record_payment(sender, tx_id or checkout_id, amount, service)
+        recorded = await svc.record_payment(sender, tx_id or checkout_id, amount, service)
+        if not recorded.get("success"):
+            # The Stripe charge already succeeded — credits must still be granted,
+            # otherwise the user gets asked to pay a second time (double-charge bug).
+            fallback = await svc.grant_credits(sender, pack_uses_for(sender))
+            ctx.logger.error(
+                f"record_payment failed ({recorded.get('error')}); credit fallback: {fallback}"
+            )
     except Exception as exc:  # noqa: BLE001
         ctx.logger.error(f"record_payment failed: {exc}")
 

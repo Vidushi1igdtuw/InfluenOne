@@ -43,7 +43,9 @@ class AIService:
         post = await self.generate_linkedin_post(topic, True, language)
 
         if include_image:
-            image_prompt = await self.generate_image_prompt(topic)
+            # Ground the image in the FINAL post content, not the raw topic.
+            base = (post.get("text") or "").strip() or topic
+            image_prompt = await self.generate_image_prompt(base[:1600])
             image_url = await self.generate_image(image_prompt, topic=topic, ctx=ctx)
             result = {**post, "image_prompt": image_prompt}
             if image_url:
@@ -60,7 +62,9 @@ class AIService:
 
         if include_image and "error" not in result:
             try:
-                image_prompt = await self.generate_image_prompt(result.get("text", "")[:200] or result.get("source_title", url))
+                # Ground the image in the generated post text (falls back to title).
+                base = (result.get("text") or "").strip()[:1600] or result.get("source_title") or url
+                image_prompt = await self.generate_image_prompt(base)
                 self._last_image_url = None
                 image_url = await self.generate_image(image_prompt, topic=result.get("source_title") or url, ctx=ctx)
 

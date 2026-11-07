@@ -30,7 +30,7 @@ def menu_card() -> dict[str, Any]:
         "title": "InfluenOne",
         "summary_rows": [
             {"label": "Model", "value": "ASI:One"},
-            {"label": "Pay", "value": "1 use / Stripe card"},
+            {"label": "Pay", "value": "$4.99 only after your draft"},
             {"label": "Chat", "value": ASI_ONE_CHAT_URL},
         ],
         "ctas": [
@@ -119,19 +119,18 @@ def url_form() -> dict[str, Any]:
     }
 
 
-def post_review(text: str, *, paid: bool) -> dict[str, Any]:
+def post_review(text: str) -> dict[str, Any]:
     preview = (text or "").strip()
     if len(preview) > 280:
         preview = preview[:277] + "..."
     rows = [{"label": "Draft", "value": preview or "(empty)"}]
-    approve = "Pay to post" if not paid else "Looks good"
     return {
         "title": "Review your post",
         "summary_rows": rows,
         "approve_cta": {
-            "label": approve,
+            "label": "Looks good",
             "primary": True,
-            "selection": {"action": "pay" if not paid else "approve_post"},
+            "selection": {"action": "approve_post"},
         },
         "reject_cta": {
             "label": "Regenerate",
@@ -175,7 +174,7 @@ async def send_menu(ctx: Context, sender: str, narration: str | None = None) -> 
         sender,
         _with_asi_link(
             narration
-            or "Type a topic or paste a URL — same as chatting with Veo3. Or use the buttons. Stripe card = 1 use, then I write the post + graphic."
+            or "Chat free — send a topic or paste a URL and I'll write the post + graphic first. You only pay ($4.99 Stripe) after you see the draft, and only when no uses are left."
         ),
         card_kind="detail",
         card_payload=menu_card(),
