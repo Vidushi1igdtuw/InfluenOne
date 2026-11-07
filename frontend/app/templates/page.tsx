@@ -244,7 +244,7 @@ export default function TemplatesPage() {
                             onClick={() => copyTemplate(template.content, template.id)}
                           >
                             {copiedId === template.id ? (
-                              <CheckCircle2 className="h-4 w-4 text-green-500" />
+                              <CheckCircle2 className="h-4 w-4 text-neutral-500" />
                             ) : (
                               <Copy className="h-4 w-4" />
                             )}

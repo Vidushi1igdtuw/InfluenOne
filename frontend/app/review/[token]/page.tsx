@@ -433,7 +433,7 @@ export default function ReviewPage() {
                   <Button
                     onClick={() => handleReview('approve')}
                     disabled={submitting}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
+                    className="flex-1 bg-gradient-to-r from-neutral-900 to-neutral-900 hover:from-neutral-900 hover:to-neutral-700 text-white shadow-lg"
                     size="lg"
                   >
                     {submitting && action === 'approve' ? (

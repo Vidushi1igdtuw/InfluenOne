@@ -4,8 +4,8 @@
   "description": "LinkedIn ghostwriter agent powered by ASI:One. Fetch.ai Innovation Lab Stranger Builds.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#060814",
-  "theme_color": "#5F43F1",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
   "icons": [
     {
       "src": "/icon.svg",

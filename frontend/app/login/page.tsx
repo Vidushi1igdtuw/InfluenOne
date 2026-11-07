@@ -30,12 +30,12 @@ export default function LoginPage() {
       <div className="relative z-10 mx-auto grid min-h-screen max-w-6xl items-center gap-10 px-4 py-10 lg:grid-cols-2">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="hidden lg:block">
           <BrandMark />
-          <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">
+          <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
             Fetch.ai Innovation Lab
           </p>
           <h1 className="mt-3 text-5xl font-semibold tracking-tight">
             Intent in.
-            <span className="mt-2 block bg-gradient-to-r from-[#5F43F1] to-[#3D8BD3] bg-clip-text text-transparent">
+            <span className="mt-2 block bg-gradient-to-r from-neutral-900 to-neutral-900 bg-clip-text text-transparent">
               LinkedIn out.
             </span>
           </h1>

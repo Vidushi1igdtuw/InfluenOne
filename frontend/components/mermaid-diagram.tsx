@@ -27,16 +27,16 @@ export function MermaidDiagram({ chart, id }: MermaidDiagramProps) {
         curve: 'basis'
       },
       themeVariables: {
-        primaryColor: '#3b82f6',
+        primaryColor: '#171717',
         primaryTextColor: '#fff',
-        primaryBorderColor: '#2563eb',
-        lineColor: '#64748b',
-        secondaryColor: '#e0e7ff',
-        tertiaryColor: '#c7d2fe',
+        primaryBorderColor: '#000000',
+        lineColor: '#a3a3a3',
+        secondaryColor: '#e5e5e5',
+        tertiaryColor: '#f5f5f5',
         background: '#ffffff',
         mainBkg: '#ffffff',
-        secondBkg: '#f8fafc',
-        textColor: '#1e293b',
+        secondBkg: '#fafafa',
+        textColor: '#171717',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         fontSize: '14px'
       }
@@ -63,7 +63,7 @@ export function MermaidDiagram({ chart, id }: MermaidDiagramProps) {
       } catch (error) {
         const container = diagramRef.current?.querySelector('.mermaid-container')
         if (container) {
-          container.innerHTML = `<div class="text-red-500 p-4 text-sm">Error rendering diagram. Please check the diagram syntax.</div>`
+          container.innerHTML = `<div class="text-neutral-500 p-4 text-sm">Error rendering diagram. Please check the diagram syntax.</div>`
         }
       }
     }

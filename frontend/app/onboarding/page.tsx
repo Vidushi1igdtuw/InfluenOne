@@ -51,7 +51,7 @@ export default function OnboardingPage() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Powered by ASI:One</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Powered by ASI:One</p>
           <h1 className="text-4xl font-semibold tracking-tight mt-2">
             Enter the lab
           </h1>
@@ -72,9 +72,9 @@ export default function OnboardingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Card className={`h-full border-2 hover:shadow-lg transition-shadow ${isCompleted ? 'border-green-500/50 bg-green-500/5' : ''} ${step.required && !isCompleted ? 'border-primary/50' : ''}`}>
+                <Card className={`h-full border-2 hover:shadow-lg transition-shadow ${isCompleted ? 'border-neutral-500/50 bg-neutral-900/5' : ''} ${step.required && !isCompleted ? 'border-primary/50' : ''}`}>
                   <CardHeader>
-                    <div className={`w-12 h-12 rounded-xl grid place-items-center mb-2 ${isCompleted ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 'bg-primary/10 text-primary'}`}>
+                    <div className={`w-12 h-12 rounded-xl grid place-items-center mb-2 ${isCompleted ? 'bg-neutral-900/10 text-neutral-600 dark:text-neutral-400' : 'bg-primary/10 text-primary'}`}>
                       {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : <step.icon className="h-6 w-6" />}
                     </div>
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function OnboardingPage() {
                   <CardTitle>LinkedIn Status</CardTitle>
                   <CardDescription className="mt-2">
                     {connected ? (
-                      <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                      <Badge className="bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20">
                         <CheckCircle2 className="mr-2 h-3 w-3" />
                         Connected
                       </Badge>

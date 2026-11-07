@@ -25,7 +25,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return (
       <div className="relative flex min-h-screen items-center justify-center">
         <div className="lab-mesh pointer-events-none absolute inset-0" />
-        <Loader2 className="relative z-10 h-8 w-8 animate-spin text-[#5F43F1]" />
+        <Loader2 className="relative z-10 h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }

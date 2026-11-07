@@ -587,7 +587,7 @@ export default function AIGeneratorPage() {
             <CardDescription className="text-sm sm:text-base">
               ASI:One writes the post and draws the graphic. Set a voice kit first for your tone.
             </CardDescription>
-            <Link href="/voice" className="text-xs text-[#3D8BD3] hover:underline">
+            <Link href="/voice" className="text-xs text-muted-foreground hover:underline">
               {hasVoiceKit(loadVoiceKit()) ? 'Voice kit on · edit' : 'Add a voice kit'}
             </Link>
           </CardHeader>
@@ -797,7 +797,7 @@ export default function AIGeneratorPage() {
                 <div className="flex flex-col gap-3">
                   <div className="flex-1 min-w-0 max-w-full">
                     <CardTitle className="text-sm sm:text-base md:text-lg font-semibold flex items-start gap-2 break-words">
-                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-neutral-600 dark:text-neutral-400 flex-shrink-0 mt-0.5" />
                       <span className="break-words overflow-wrap-anywhere word-break-break-word">Generated Post Preview</span>
                     </CardTitle>
                     <CardDescription className="mt-1 text-xs sm:text-sm break-words overflow-wrap-anywhere word-break-break-word">
@@ -940,20 +940,20 @@ export default function AIGeneratorPage() {
 
                 {/* Schedule Info */}
                 {(generatedPost.schedule_id || reviewLink) && (
-                  <div className="p-3 rounded-lg border bg-blue-50 dark:bg-blue-950/20 w-full min-w-0">
+                  <div className="p-3 rounded-lg border bg-neutral-50 dark:bg-neutral-950/20 w-full min-w-0">
                     <div className="flex items-start justify-between gap-2 w-full min-w-0">
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 break-words">
+                        <p className="text-xs sm:text-sm font-medium text-neutral-900 dark:text-neutral-100 break-words">
                           Post Scheduled
                         </p>
                         {generatedPost.schedule_id && (
-                          <p className="text-xs text-blue-700 dark:text-blue-300 mt-1 break-all">
+                          <p className="text-xs text-neutral-700 dark:text-neutral-300 mt-1 break-all">
                             Schedule ID: {generatedPost.schedule_id}
                           </p>
                         )}
                         {(generatedPost.review_link || reviewLink) && (
                           <div className="mt-2 space-y-2 w-full min-w-0">
-                            <p className="text-xs font-medium text-blue-900 dark:text-blue-100 break-words">
+                            <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100 break-words">
                               Review Link (Share with your team):
                             </p>
                             <div className="flex flex-col gap-2 w-full min-w-0">
@@ -974,7 +974,7 @@ export default function AIGeneratorPage() {
                               </Button>
                             </div>
                             {requireApproval && teamEmails.filter(e => e.trim()).length > 0 && (
-                              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 break-words overflow-wrap-anywhere">
+                              <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 break-words overflow-wrap-anywhere">
                                 Team emails: {teamEmails.filter(e => e.trim()).join(', ')}
                               </p>
                             )}
@@ -983,15 +983,15 @@ export default function AIGeneratorPage() {
                             {generatedPost.approval_status && (
                               <div className="mt-3 space-y-2">
                                 {generatedPost.approval_status.approved ? (
-                                  <div className="p-2 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
+                                  <div className="p-2 rounded-lg bg-neutral-50 dark:bg-neutral-950/20 border border-neutral-200 dark:border-neutral-800">
                                     <div className="flex items-center gap-2">
-                                      <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                                      <CheckCircle2 className="h-4 w-4 text-neutral-600 dark:text-neutral-400 flex-shrink-0" />
                                       <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-medium text-green-900 dark:text-green-100 break-words">
+                                        <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100 break-words">
                                           ✅ Approved by {generatedPost.approval_status.approved_by}
                                         </p>
                                         {generatedPost.approval_status.approved_at && (
-                                          <p className="text-[10px] text-green-700 dark:text-green-300 mt-0.5">
+                                          <p className="text-[10px] text-neutral-700 dark:text-neutral-300 mt-0.5">
                                             {new Date(generatedPost.approval_status.approved_at).toLocaleString()}
                               </p>
                             )}
@@ -999,10 +999,10 @@ export default function AIGeneratorPage() {
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className="p-2 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800">
+                                  <div className="p-2 rounded-lg bg-neutral-50 dark:bg-neutral-950/20 border border-neutral-200 dark:border-neutral-800">
                                     <div className="flex items-center gap-2">
-                                      <Bell className="h-4 w-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
-                                      <p className="text-xs font-medium text-yellow-900 dark:text-yellow-100">
+                                      <Bell className="h-4 w-4 text-neutral-600 dark:text-neutral-400 flex-shrink-0" />
+                                      <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100">
                                         ⏳ Waiting for team approval...
                                       </p>
                                     </div>
@@ -1012,7 +1012,7 @@ export default function AIGeneratorPage() {
                                 {/* Team Comments */}
                                 {generatedPost.approval_status.comments && generatedPost.approval_status.comments.length > 0 && (
                                   <div className="mt-2 space-y-2">
-                                    <p className="text-xs font-medium text-blue-900 dark:text-blue-100">Team Comments:</p>
+                                    <p className="text-xs font-medium text-neutral-900 dark:text-neutral-100">Team Comments:</p>
                                     {generatedPost.approval_status.comments.map((comment, idx) => (
                                       <div key={idx} className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                                         <div className="flex items-start gap-2">
@@ -1128,25 +1128,25 @@ export default function AIGeneratorPage() {
                     key={notif.id}
                     className={`p-3 rounded-lg border ${
                       notif.type === 'success' 
-                        ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800'
+                        ? 'bg-neutral-50 dark:bg-neutral-950/20 border-neutral-200 dark:border-neutral-800'
                         : notif.type === 'warning'
-                        ? 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800'
-                        : 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800'
+                        ? 'bg-neutral-50 dark:bg-neutral-950/20 border-neutral-200 dark:border-neutral-800'
+                        : 'bg-neutral-50 dark:bg-neutral-950/20 border-neutral-200 dark:border-neutral-800'
                     }`}
                   >
                     <div className="flex items-start gap-2">
                       {notif.type === 'success' ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="h-4 w-4 text-neutral-600 dark:text-neutral-400 flex-shrink-0 mt-0.5" />
                       ) : (
-                        <Bell className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                        <Bell className="h-4 w-4 text-neutral-600 dark:text-neutral-400 flex-shrink-0 mt-0.5" />
                       )}
                       <div className="flex-1 min-w-0">
                         <p className={`text-xs break-words ${
                           notif.type === 'success'
-                            ? 'text-green-900 dark:text-green-100'
+                            ? 'text-neutral-900 dark:text-neutral-100'
                             : notif.type === 'warning'
-                            ? 'text-yellow-900 dark:text-yellow-100'
-                            : 'text-blue-900 dark:text-blue-100'
+                            ? 'text-neutral-900 dark:text-neutral-100'
+                            : 'text-neutral-900 dark:text-neutral-100'
                         }`}>
                           {notif.message}
                         </p>
@@ -1178,7 +1178,7 @@ export default function AIGeneratorPage() {
                 <div className="text-muted-foreground">No activity yet</div>
               ) : (
                 log.map((e, i) => (
-                  <div key={i} className={`break-words overflow-wrap-anywhere word-break-break-word ${e.type === 'error' ? 'text-destructive' : e.type === 'success' ? 'text-green-600 dark:text-green-400' : ''}`}>
+                  <div key={i} className={`break-words overflow-wrap-anywhere word-break-break-word ${e.type === 'error' ? 'text-destructive' : e.type === 'success' ? 'text-neutral-600 dark:text-neutral-400' : ''}`}>
                     [{e.ts}] {e.msg}
                   </div>
                 ))

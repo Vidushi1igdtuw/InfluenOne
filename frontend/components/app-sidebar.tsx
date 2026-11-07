@@ -114,7 +114,7 @@ export function AppSidebar() {
 
           {showLabel && (
             <div className="lab-glass space-y-2 rounded-xl p-3">
-              <Badge variant="outline" className="border-[#3D8BD3]/40 text-secondary">Innovation Lab</Badge>
+              <Badge variant="outline" className="border-border text-secondary">Innovation Lab</Badge>
               <p className="text-xs text-muted-foreground">
                 {hasPaid ? `${creditsRemaining} / ${packSize} ASI:One uses` : 'Stripe pack · 10 uses'}
               </p>
@@ -144,7 +144,7 @@ export function AppSidebar() {
                     </div>
                   </div>
                 )}
-                <Badge variant="outline" className="w-full justify-center gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                <Badge variant="outline" className="w-full justify-center gap-1 border-neutral-500/30 bg-neutral-900/10 text-neutral-400">
                   <CheckCircle2 className="h-3 w-3" />
                   {showLabel && 'Live'}
                 </Badge>

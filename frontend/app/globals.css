@@ -7,63 +7,63 @@
     --font-sans: var(--font-space);
     --font-mono: var(--font-plex);
     --radius: 0.875rem;
-    --background: 228 45% 97%;
-    --foreground: 233 40% 8%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 233 40% 8%;
+    --card-foreground: 0 0% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 233 40% 8%;
-    --primary: 248 86% 60%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 0 0% 9%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 205 64% 53%;
-    --secondary-foreground: 0 0% 100%;
-    --tertiary: 248 86% 60%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --tertiary: 0 0% 9%;
     --tertiary-foreground: 0 0% 100%;
-    --hover-bg: 248 100% 96%;
-    --muted: 228 30% 93%;
-    --muted-foreground: 230 15% 38%;
-    --accent: 205 80% 95%;
-    --accent-foreground: 248 86% 40%;
-    --destructive: 0 84.2% 60.2%;
+    --hover-bg: 0 0% 94%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 94%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 230 22% 88%;
-    --input: 230 22% 88%;
-    --ring: 248 86% 60%;
-    --chart-1: 248 86% 60%;
-    --chart-2: 205 64% 53%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 0% 9%;
+    --chart-1: 0 0% 9%;
+    --chart-2: 0 0% 30%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 0 0% 70%;
+    --chart-5: 0 0% 85%;
   }
 
   .dark {
-    --background: 233 48% 4%;
-    --foreground: 210 40% 96%;
-    --card: 233 38% 7%;
-    --card-foreground: 210 40% 96%;
-    --popover: 233 38% 8%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 248 86% 64%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 205 64% 56%;
-    --secondary-foreground: 0 0% 100%;
-    --tertiary: 248 86% 70%;
-    --tertiary-foreground: 0 0% 100%;
-    --hover-bg: 248 40% 14%;
-    --muted: 233 28% 12%;
-    --muted-foreground: 225 14% 68%;
-    --accent: 248 36% 14%;
-    --accent-foreground: 248 86% 82%;
+    --background: 0 0% 5%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 96%;
+    --tertiary: 0 0% 88%;
+    --tertiary-foreground: 0 0% 5%;
+    --hover-bg: 0 0% 12%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 96%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 233 24% 16%;
-    --input: 233 24% 16%;
-    --ring: 248 86% 68%;
-    --chart-1: 248 86% 64%;
-    --chart-2: 205 64% 56%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 80%;
+    --chart-1: 0 0% 96%;
+    --chart-2: 0 0% 75%;
+    --chart-3: 0 0% 55%;
+    --chart-4: 0 0% 35%;
+    --chart-5: 0 0% 20%;
   }
 }
 
@@ -84,15 +84,15 @@
 
 .lab-mesh {
   background:
-    radial-gradient(900px 480px at 12% -10%, hsl(248 86% 60% / 0.28), transparent 55%),
-    radial-gradient(800px 520px at 92% 8%, hsl(205 64% 53% / 0.22), transparent 50%),
-    radial-gradient(700px 500px at 50% 110%, hsl(248 86% 40% / 0.16), transparent 55%);
+    radial-gradient(900px 480px at 12% -10%, hsl(0 0% 50% / 0.10), transparent 55%),
+    radial-gradient(800px 520px at 92% 8%, hsl(0 0% 65% / 0.08), transparent 50%),
+    radial-gradient(700px 500px at 50% 110%, hsl(0 0% 35% / 0.08), transparent 55%);
 }
 
 .lab-grid {
   background-image:
-    linear-gradient(hsl(210 40% 96% / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(210 40% 96% / 0.04) 1px, transparent 1px);
+    linear-gradient(hsl(0 0% 50% / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(0 0% 50% / 0.08) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
 }
@@ -103,11 +103,11 @@
 }
 
 .lab-glass {
-  @apply border border-border bg-card/70 shadow-[0_0_0_1px_hsl(248_86%_60%_/_0.08),0_20px_50px_-24px_hsl(248_86%_40%_/_0.55)] backdrop-blur-xl;
+  @apply border border-border bg-card/70 shadow-[0_0_0_1px_hsl(0_0%_50%_/_0.08),0_20px_50px_-24px_hsl(0_0%_0%_/_0.35)] backdrop-blur-xl;
 }
 
 .lab-glow {
-  box-shadow: 0 0 0 1px hsl(248 86% 60% / 0.35), 0 10px 40px -10px hsl(248 86% 60% / 0.55);
+  box-shadow: 0 0 0 1px hsl(0 0% 50% / 0.25), 0 10px 40px -10px hsl(0 0% 0% / 0.35);
 }
 
 @keyframes float {

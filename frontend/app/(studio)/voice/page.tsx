@@ -24,7 +24,7 @@ export default function VoicePage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <p className="font-mono text-[11px] uppercase tracking-widest text-[#3D8BD3]">ASI:One only</p>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">ASI:One only</p>
         <h1 className="text-3xl font-semibold tracking-tight">Voice kit</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           ASI:One writes in this voice on every generate. No other model. Kept on this device.

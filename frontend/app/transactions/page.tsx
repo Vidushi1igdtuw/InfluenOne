@@ -246,7 +246,7 @@ export default function TransactionsPage() {
                             variant={tx.status === 'verified' ? 'default' : 'secondary'}
                             className={
                               tx.status === 'verified'
-                                ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20'
+                                ? 'bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20'
                                 : ''
                             }
                           >
@@ -276,7 +276,7 @@ export default function TransactionsPage() {
                             </div>
                           )}
                           {tx.is_processing && (
-                            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                            <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
                               <span className="text-xs">⏳ Transaction is still processing</span>
                             </div>
                           )}

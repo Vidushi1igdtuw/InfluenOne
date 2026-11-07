@@ -142,12 +142,12 @@ export default function DashboardPage() {
   }
 
   const quickActions = [
-        { href: '/ai', icon: Bot, label: 'Studio', description: 'ASI:One generate + image', color: 'from-[#5F43F1] to-[#3D8BD3]' },
-    { href: '/url-to-post', icon: LinkIcon, label: 'URL → post', description: 'Scrape then write', color: 'from-[#3D8BD3] to-[#5F43F1]' },
-    { href: '/voice', icon: Sparkles, label: 'Voice kit', description: 'Lock your tone', color: 'from-[#5F43F1] to-[#2a1a7a]' },
-    { href: '/gallery', icon: FileText, label: 'Gallery', description: 'ASI:One graphics', color: 'from-[#3D8BD3] to-[#0b2a44]' },
-    { href: '/agent', icon: Calendar, label: 'Agentverse', description: 'Chat on ASI:One', color: 'from-[#5F43F1] to-[#3D8BD3]' },
-    { href: '/schedule', icon: PenSquare, label: 'Schedule', description: 'Set it and post', color: 'from-[#3D8BD3] to-[#5F43F1]' },
+        { href: '/ai', icon: Bot, label: 'Studio', description: 'ASI:One generate + image', color: 'from-neutral-900 to-neutral-900' },
+    { href: '/url-to-post', icon: LinkIcon, label: 'URL → post', description: 'Scrape then write', color: 'from-neutral-900 to-neutral-900' },
+    { href: '/voice', icon: Sparkles, label: 'Voice kit', description: 'Lock your tone', color: 'from-neutral-900 to-neutral-600' },
+    { href: '/gallery', icon: FileText, label: 'Gallery', description: 'ASI:One graphics', color: 'from-neutral-900 to-neutral-500' },
+    { href: '/agent', icon: Calendar, label: 'Agentverse', description: 'Chat on ASI:One', color: 'from-neutral-900 to-neutral-900' },
+    { href: '/schedule', icon: PenSquare, label: 'Schedule', description: 'Set it and post', color: 'from-neutral-900 to-neutral-900' },
   ]
 
   const completedTasks = tasks.filter(t => t.completed).length
@@ -169,9 +169,9 @@ export default function DashboardPage() {
           <CardHeader className="p-6 md:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex-1 space-y-3">
-                <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Command center · Powered by ASI:One</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Command center · Powered by ASI:One</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5F43F1] to-[#3D8BD3] flex items-center justify-center lab-glow">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-900 flex items-center justify-center lab-glow">
                     <Zap className="h-6 w-6 text-white" />
                   </div>
                   <div>
@@ -204,7 +204,7 @@ export default function DashboardPage() {
                 )}
                 <Badge
                   variant={connected ? 'default' : 'secondary'}
-                  className={`${connected ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/30' : 'border-2 bg-muted'} text-sm px-4 py-2 h-auto whitespace-nowrap shadow-sm`}
+                  className={`${connected ? 'bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/30' : 'border-2 bg-muted'} text-sm px-4 py-2 h-auto whitespace-nowrap shadow-sm`}
                 >
                   {connected ? (
                     <>
@@ -237,8 +237,8 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium text-muted-foreground mb-1">Total Tasks</p>
                 <p className="text-3xl font-bold">{totalTasks}</p>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="w-12 h-12 rounded-lg bg-neutral-900/10 flex items-center justify-center">
+                <FileText className="h-6 w-6 text-neutral-600 dark:text-neutral-400" />
               </div>
             </div>
           </CardContent>
@@ -248,10 +248,10 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">Completed</p>
-                <p className="text-3xl font-bold text-green-600 dark:text-green-400">{completedTasks}</p>
+                <p className="text-3xl font-bold text-neutral-600 dark:text-neutral-400">{completedTasks}</p>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="w-12 h-12 rounded-lg bg-neutral-900/10 flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-neutral-600 dark:text-neutral-400" />
               </div>
             </div>
           </CardContent>
@@ -261,10 +261,10 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">Today's Tasks</p>
-                <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{todayTasks}</p>
+                <p className="text-3xl font-bold text-neutral-600 dark:text-neutral-400">{todayTasks}</p>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center">
-                <Clock className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              <div className="w-12 h-12 rounded-lg bg-neutral-900/10 flex items-center justify-center">
+                <Clock className="h-6 w-6 text-neutral-600 dark:text-neutral-400" />
               </div>
             </div>
           </CardContent>
@@ -560,7 +560,7 @@ function TaskItem({
               className="mt-1 flex-shrink-0 hover:scale-110 transition-transform"
             >
               {task.completed ? (
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <CheckCircle className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
               ) : (
                 <Circle className="h-5 w-5 text-muted-foreground hover:text-primary" />
               )}

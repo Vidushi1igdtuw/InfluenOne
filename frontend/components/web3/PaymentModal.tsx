@@ -83,7 +83,7 @@ export function PaymentModal({
       <Card className="border-2">
         <CardContent className="pt-6">
           <div className="flex flex-col items-center justify-center space-y-4 py-8">
-            <CheckCircle2 className="h-16 w-16 text-green-500" />
+            <CheckCircle2 className="h-16 w-16 text-neutral-500" />
             <div className="text-center space-y-2">
               <h3 className="text-xl font-bold">Pack unlocked</h3>
               <p className="text-sm text-muted-foreground">{packUses} uses added. Generate, URL-to-post, and schedule are included.</p>

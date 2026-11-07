@@ -16,7 +16,7 @@ export default function GalleryPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-widest text-[#3D8BD3]">ASI:One image</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">ASI:One image</p>
           <h1 className="text-3xl font-semibold tracking-tight">Gallery</h1>
           <p className="mt-1 text-sm text-muted-foreground">Graphics generated in Studio, kept on this device.</p>
         </div>

@@ -61,20 +61,20 @@ function Hero() {
         className="mx-auto max-w-4xl text-center"
       >
         <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
-          <span className="rounded-full border border-[#3D8BD3]/40 bg-[#3D8BD3]/10 px-3 py-1 text-[11px] font-medium tracking-wide text-secondary">
+          <span className="rounded-full border border-border bg-muted px-3 py-1 text-[11px] font-medium tracking-wide text-secondary">
             {BRAND.lab}
           </span>
-          <span className="rounded-full border border-[#5F43F1]/40 bg-[#5F43F1]/10 px-3 py-1 text-[11px] font-medium tracking-wide text-primary">
+          <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-medium tracking-wide text-primary">
             {BRAND.event}
           </span>
           <PoweredByAsi />
         </div>
-        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">
+        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
           Something strange is brewing
         </p>
           <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
           LinkedIn, from intent to action.
-          <span className="mt-2 block bg-gradient-to-r from-[#a897ff] via-[#c4b8ff] to-[#7ec4f0] bg-clip-text text-transparent">
+          <span className="mt-2 block bg-gradient-to-r from-neutral-900 via-neutral-500 to-neutral-400 bg-clip-text text-transparent">
             Powered by ASI:One.
           </span>
         </h1>
@@ -115,16 +115,16 @@ function Preview() {
     <div className="lab-glass relative overflow-hidden rounded-3xl p-4 sm:p-6">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-          <span className="h-2 w-2 animate-pulse-glow rounded-full bg-emerald-400" />
+          <span className="h-2 w-2 animate-pulse-glow rounded-full bg-foreground" />
           Live studio · ASI:One
         </div>
-        <span className="rounded-full bg-[#5F43F1]/20 px-2.5 py-0.5 text-[10px] text-primary">
+        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] text-primary">
           Challenge 1 + 2
         </span>
       </div>
       <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
         <div className="rounded-2xl border border-border bg-card/70 p-5 text-left">
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#3D8BD3]">ASI:One draft</p>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">ASI:One draft</p>
           <p className="mt-3 text-sm leading-relaxed text-foreground/90">
             Most LinkedIn tools stop at a chatbot. InfluenOne does not. You give it an intent —
             a topic, a URL, a half-formed thought — and the agent writes, illustrates, takes payment,
@@ -155,7 +155,7 @@ function Preview() {
 function Pillars() {
   return (
     <section id="pillars" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Three pillars</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Three pillars</p>
       <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Built on the Fetch.ai stack.</h2>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {PILLARS.map((p, i) => (
@@ -167,7 +167,7 @@ function Pillars() {
             transition={{ delay: i * 0.08 }}
             className="lab-glass rounded-2xl p-6"
           >
-            <p className="font-mono text-[10px] uppercase tracking-widest text-[#5F43F1]">0{i + 1}</p>
+            <p className="font-mono text-[10px] uppercase tracking-widest text-primary">0{i + 1}</p>
             <h3 className="mt-2 text-xl font-semibold">{p.title}</h3>
             <p className="mt-2 text-sm text-muted-foreground">{p.copy}</p>
           </motion.div>
@@ -180,12 +180,12 @@ function Pillars() {
 function IntentFlow() {
   return (
     <section id="flow" className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Challenge 1</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Challenge 1</p>
       <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Intent → action, not a chatbot.</h2>
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {FLOW.map((s) => (
           <div key={s.n} className="rounded-2xl border border-border bg-muted p-5">
-            <p className="font-mono text-xs text-[#5F43F1]">{s.n}</p>
+            <p className="font-mono text-xs text-primary">{s.n}</p>
             <h3 className="mt-1 text-lg font-semibold">{s.t}</h3>
             <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
           </div>
@@ -225,7 +225,7 @@ const SHOWCASE_POSTS = [
 function PostsShowcase() {
   return (
     <section id="showcase" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Made with the agent</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Made with the agent</p>
       <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Four posts, zero manual work.</h2>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {SHOWCASE_POSTS.map((post, i) => (
@@ -273,15 +273,15 @@ const WORKFLOW_STEPS = [
 function WorkflowAnimation() {
   return (
     <section className="relative mx-auto max-w-7xl overflow-hidden px-4 py-16 sm:px-6">
-      <p className="text-center font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Live workflow</p>
+      <p className="text-center font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Live workflow</p>
       <h2 className="mt-2 text-center text-3xl font-semibold tracking-tight sm:text-4xl">
         Watch one intent become a published post.
       </h2>
       <div className="relative mt-12">
-        <div className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-[#5F43F1]/50 to-transparent lg:block" />
+        <div className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-neutral-400/60 to-transparent lg:block" />
         <motion.div
           aria-hidden
-          className="absolute top-[18px] hidden h-3 w-3 rounded-full bg-[#5F43F1] shadow-[0_0_16px_4px_rgba(95,67,241,0.55)] lg:block"
+          className="absolute top-[18px] hidden h-3 w-3 rounded-full bg-primary shadow-[0_0_16px_4px_rgba(0,0,0,0.35)] lg:block"
           animate={{ left: ['2%', '94%'] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
         />
@@ -295,7 +295,7 @@ function WorkflowAnimation() {
               transition={{ delay: i * 0.12 }}
               className="flex flex-col items-center gap-3 text-center"
             >
-              <div className="lab-glass flex h-12 w-12 items-center justify-center rounded-full border border-[#5F43F1]/40">
+              <div className="lab-glass flex h-12 w-12 items-center justify-center rounded-full border border-primary/30">
                 <step.icon className="h-5 w-5 text-primary" />
               </div>
               <p className="text-xs font-medium text-muted-foreground">{step.label}</p>
@@ -317,7 +317,7 @@ function AgentCard() {
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
       <div className="lab-glass grid gap-8 rounded-3xl p-6 md:grid-cols-2 md:p-10">
         <div>
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Discoverable</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">Discoverable</p>
           <h2 className="mt-2 text-3xl font-semibold">Talk to it on ASI:One.</h2>
           <p className="mt-3 text-sm text-muted-foreground">
             Full workflow in chat: topic or URL → ASI:One draft + image → Stripe Payment Protocol → post.
@@ -334,13 +334,13 @@ function AgentCard() {
           </div>
         </div>
         <div className="rounded-2xl border border-border bg-card/70 p-5 font-mono text-xs leading-relaxed">
-          <p className="text-[#3D8BD3]">agent.name</p>
+          <p className="text-muted-foreground">agent.name</p>
           <p className="mt-1 text-foreground">{BRAND.agentName}</p>
-          <p className="mt-4 text-[#3D8BD3]">agent.address</p>
+          <p className="mt-4 text-muted-foreground">agent.address</p>
           <p className="mt-1 break-all text-foreground/80">{BRAND.agentAddress}</p>
-          <p className="mt-4 text-[#3D8BD3]">protocols</p>
+          <p className="mt-4 text-muted-foreground">protocols</p>
           <p className="mt-1">ACP · Payment Protocol · REST</p>
-          <p className="mt-4 flex items-center gap-2 text-emerald-400">
+          <p className="mt-4 flex items-center gap-2 text-neutral-400">
             <Radio className="h-3.5 w-3.5" /> mailbox=True
           </p>
         </div>
@@ -352,7 +352,7 @@ function AgentCard() {
 function Cta() {
   return (
     <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
-      <div className="relative overflow-hidden rounded-3xl border border-[#5F43F1]/30 bg-gradient-to-r from-[#5F43F1]/20 via-[#5F43F1]/10 to-[#3D8BD3]/20 p-8 text-center sm:p-12">
+      <div className="relative overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-r from-neutral-900/20 via-neutral-400/60 to-neutral-900/20 p-8 text-center sm:p-12">
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Ship the post. Win the room.</h2>
         <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
           Stripe pack is $4.99 for 10 studio uses. ASI:One chat is 1 use per payment.

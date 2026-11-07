@@ -285,14 +285,14 @@ export default function SchedulePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="border-2 bg-gradient-to-br from-green-500/5 via-background to-background">
+        <Card className="border-2 bg-gradient-to-br from-neutral-900/5 via-background to-background">
           <CardHeader className="p-6 md:p-8">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-neutral-900 to-neutral-900 flex items-center justify-center shadow-lg">
                 <CalendarIcon className="h-7 w-7 text-white" />
               </div>
               <div className="flex-1">
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
+                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-900 bg-clip-text text-transparent">
                   Content Scheduler
                 </CardTitle>
                 <CardDescription className="text-base mt-1">
@@ -489,7 +489,7 @@ export default function SchedulePage() {
             <Button 
               onClick={requestSchedule} 
               disabled={loading || showPayment} 
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg" 
+              className="w-full bg-gradient-to-r from-neutral-900 to-neutral-900 hover:from-neutral-900 hover:to-neutral-700 text-white shadow-lg" 
               size="lg"
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -537,9 +537,9 @@ export default function SchedulePage() {
                         <div className="flex-1 space-y-3">
                           <div className="flex items-start gap-3">
                             <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              s.isActive ? 'bg-green-500/10' : 'bg-muted'
+                              s.isActive ? 'bg-neutral-900/10' : 'bg-muted'
                             }`}>
-                              <Clock className={`h-5 w-5 ${s.isActive ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`} />
+                              <Clock className={`h-5 w-5 ${s.isActive ? 'text-neutral-600 dark:text-neutral-400' : 'text-muted-foreground'}`} />
                             </div>
                             <div className="flex-1">
                               <h4 className="font-bold text-lg mb-2 text-foreground">{s.topic}</h4>
@@ -571,7 +571,7 @@ export default function SchedulePage() {
                         </div>
                         <Badge
                           variant={s.isActive ? 'default' : 'secondary'}
-                          className={`${s.isActive ? 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/30' : ''} text-sm px-3 py-1.5 h-auto whitespace-nowrap`}
+                          className={`${s.isActive ? 'bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/30' : ''} text-sm px-3 py-1.5 h-auto whitespace-nowrap`}
                         >
                           {s.isActive ? '✓ Active' : 'Paused'}
                         </Badge>
@@ -591,7 +591,7 @@ export default function SchedulePage() {
                           <Button
                             onClick={() => toggleScheduleState(s._id, true)}
                             size="sm"
-                            className="flex-1 bg-green-600 hover:bg-green-700"
+                            className="flex-1 bg-neutral-900 hover:bg-neutral-700"
                           >
                             <Play className="mr-2 h-3.5 w-3.5" />
                             Resume
@@ -621,7 +621,7 @@ export default function SchedulePage() {
                             <div className="flex flex-col gap-3">
                               <div className="flex-1 min-w-0 max-w-full">
                                 <CardTitle className="text-sm sm:text-base md:text-lg font-semibold flex items-start gap-2 break-words">
-                                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-neutral-600 dark:text-neutral-400 flex-shrink-0 mt-0.5" />
                                   <span className="break-words overflow-wrap-anywhere word-break-break-word">Scheduled Post Preview</span>
                                 </CardTitle>
                                 <CardDescription className="mt-1 text-xs sm:text-sm break-words overflow-wrap-anywhere word-break-break-word">

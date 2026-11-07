@@ -36,7 +36,7 @@ export function PaymentGate({ children }: { children: React.ReactNode }) {
     return (
       <div className="relative flex min-h-screen items-center justify-center">
         <LabAtmosphere />
-        <Loader2 className="relative z-10 h-8 w-8 animate-spin text-[#5F43F1]" />
+        <Loader2 className="relative z-10 h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -47,7 +47,7 @@ export function PaymentGate({ children }: { children: React.ReactNode }) {
         <LabAtmosphere />
         <div className="lab-glass relative z-10 w-full max-w-md rounded-3xl p-8 text-center">
           <BrandMark className="mb-6 justify-center" />
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-[#5F43F1]/20">
+          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-primary/10">
             <Lock className="h-7 w-7 text-primary" />
           </div>
           <h1 className="text-2xl font-semibold">Unlock the studio</h1>

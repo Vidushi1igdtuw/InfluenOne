@@ -15,37 +15,37 @@ export default function TechStackPage() {
       category: 'Frontend',
       items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Space Grotesk'],
       icon: Code2,
-      color: 'text-blue-500',
+      color: 'text-neutral-500',
     },
     {
       category: 'Fetch.ai',
       items: ['uAgents', 'Agent Chat Protocol', 'Payment Protocol', 'Agentverse', 'mailbox'],
       icon: Zap,
-      color: 'text-yellow-500',
+      color: 'text-neutral-500',
     },
     {
       category: 'Payments',
       items: ['Stripe Checkout', 'Payment Protocol embedded_page', 'FET on Fetch Network'],
       icon: Coins,
-      color: 'text-orange-500',
+      color: 'text-neutral-500',
     },
     {
       category: 'Database',
       items: ['Supabase', 'PostgreSQL', 'Storage images bucket', 'JWT Auth'],
       icon: Database,
-      color: 'text-green-500',
+      color: 'text-neutral-500',
     },
     {
       category: 'ASI:One',
       items: ['ASI:One only', 'ChatOpenAI → api.asi1.ai/v1', 'Image generate b64_json', 'web_search high'],
       icon: Globe,
-      color: 'text-purple-500',
+      color: 'text-neutral-500',
     },
     {
       category: 'Security & Auth',
       items: ['JWT Authentication', 'OAuth 2.0 (LinkedIn)', 'CORS Protection', 'Payment Verification', 'Session Management'],
       icon: Shield,
-      color: 'text-red-500',
+      color: 'text-neutral-500',
     },
   ]
 
@@ -59,7 +59,7 @@ export default function TechStackPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3] mb-3">Powered by ASI:One</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground mb-3">Powered by ASI:One</p>
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tight mb-4">
             Tech
           </h1>
@@ -124,15 +124,15 @@ export default function TechStackPage() {
     C -->|FET Payments| G[Fetch Network]
     C -->|Stripe Pack| S[Stripe Checkout]
 
-    style A fill:#3b82f6,stroke:#2563eb,color:#fff
-    style B fill:#3b82f6,stroke:#2563eb,color:#fff
-    style C fill:#f59e0b,stroke:#d97706,color:#fff
-    style D fill:#10b981,stroke:#059669,color:#fff
-    style E fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style F fill:#5F43F1,stroke:#3D8BD3,color:#fff
-    style G fill:#f97316,stroke:#ea580c,color:#fff
-    style S fill:#f97316,stroke:#ea580c,color:#fff
-    style U fill:#3b82f6,stroke:#2563eb,color:#fff`}
+    style A fill:#171717,stroke:#000000,color:#fff
+    style B fill:#171717,stroke:#000000,color:#fff
+    style C fill:#404040,stroke:#262626,color:#fff
+    style D fill:#525252,stroke:#404040,color:#fff
+    style E fill:#262626,stroke:#0a0a0a,color:#fff
+    style F fill:#0a0a0a,stroke:#737373,color:#fff
+    style G fill:#404040,stroke:#262626,color:#fff
+    style S fill:#404040,stroke:#262626,color:#fff
+    style U fill:#171717,stroke:#000000,color:#fff`}
                 id="architecture-diagram"
               />
             </CardContent>
@@ -215,10 +215,10 @@ export default function TechStackPage() {
 
     Save --> Done([Service Complete])
 
-    style Start fill:#3b82f6,stroke:#2563eb,color:#fff
-    style Execute fill:#10b981,stroke:#059669,color:#fff
-    style Save fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style Done fill:#10b981,stroke:#059669,color:#fff`}
+    style Start fill:#171717,stroke:#000000,color:#fff
+    style Execute fill:#525252,stroke:#404040,color:#fff
+    style Save fill:#262626,stroke:#0a0a0a,color:#fff
+    style Done fill:#525252,stroke:#404040,color:#fff`}
                 id="service-flow-diagram"
               />
             </CardContent>
@@ -260,11 +260,11 @@ export default function TechStackPage() {
     Scheduler --> DB
     Analytics --> DB
 
-    style API fill:#f59e0b,stroke:#d97706,color:#fff
-    style DB fill:#10b981,stroke:#059669,color:#fff
-    style Stripe fill:#f97316,stroke:#ea580c,color:#fff
-    style LI_API fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style ASI1 fill:#5F43F1,stroke:#3D8BD3,color:#fff`}
+    style API fill:#404040,stroke:#262626,color:#fff
+    style DB fill:#525252,stroke:#404040,color:#fff
+    style Stripe fill:#404040,stroke:#262626,color:#fff
+    style LI_API fill:#262626,stroke:#0a0a0a,color:#fff
+    style ASI1 fill:#0a0a0a,stroke:#737373,color:#fff`}
                 id="backend-services-diagram"
               />
             </CardContent>
@@ -303,8 +303,8 @@ export default function TechStackPage() {
     LinkedIn --> RLS
     Templates --> RLS
 
-    style DB fill:#10b981,stroke:#059669,color:#fff
-    style RLS fill:#ef4444,stroke:#dc2626,color:#fff`}
+    style DB fill:#525252,stroke:#404040,color:#fff
+    style RLS fill:#404040,stroke:#0a0a0a,color:#fff`}
                 id="data-storage-diagram"
               />
             </CardContent>
@@ -358,20 +358,20 @@ export default function TechStackPage() {
         Supabase -->|Hosted on| SupaCloud[Supabase Cloud]
     end
 
-    style User fill:#3b82f6,stroke:#2563eb,color:#fff
-    style Web fill:#3b82f6,stroke:#2563eb,color:#fff
-    style Chat fill:#3b82f6,stroke:#2563eb,color:#fff
-    style Payment fill:#f97316,stroke:#ea580c,color:#fff
-    style PayAPI fill:#f97316,stroke:#ea580c,color:#fff
-    style AI fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style LinkedIn fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style Schedule fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style URL fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style Template fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style ASI1 fill:#5F43F1,stroke:#3D8BD3,color:#fff
-    style Railway fill:#f59e0b,stroke:#d97706,color:#fff
-    style SupaCloud fill:#10b981,stroke:#059669,color:#fff
-    style Supabase fill:#10b981,stroke:#059669,color:#fff`}
+    style User fill:#171717,stroke:#000000,color:#fff
+    style Web fill:#171717,stroke:#000000,color:#fff
+    style Chat fill:#171717,stroke:#000000,color:#fff
+    style Payment fill:#404040,stroke:#262626,color:#fff
+    style PayAPI fill:#404040,stroke:#262626,color:#fff
+    style AI fill:#262626,stroke:#0a0a0a,color:#fff
+    style LinkedIn fill:#262626,stroke:#0a0a0a,color:#fff
+    style Schedule fill:#262626,stroke:#0a0a0a,color:#fff
+    style URL fill:#262626,stroke:#0a0a0a,color:#fff
+    style Template fill:#262626,stroke:#0a0a0a,color:#fff
+    style ASI1 fill:#0a0a0a,stroke:#737373,color:#fff
+    style Railway fill:#404040,stroke:#262626,color:#fff
+    style SupaCloud fill:#525252,stroke:#404040,color:#fff
+    style Supabase fill:#525252,stroke:#404040,color:#fff`}
                 id="payment-usage-diagram"
               />
             </CardContent>

@@ -12,7 +12,7 @@ const upcomingPlatforms = [
     icon: Youtube,
     color: 'bg-black dark:bg-gray-800',
     gradient: 'from-black/20 to-gray-800/20 dark:from-gray-800/20 dark:to-black/20',
-    badgeColor: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20',
+    badgeColor: 'bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20',
     imagePosition: 'left', // Image on left, content on right
     features: [
       {
@@ -224,9 +224,9 @@ export function UpcomingFeaturesSection() {
             transition={{ delay: 0.2 }}
           >
             <Card className="border-2 h-full hover:shadow-xl transition-all duration-300 overflow-hidden">
-              <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 p-4 sm:p-5 md:p-6">
+              <div className="bg-gradient-to-br from-neutral-900/10 to-neutral-900/10 p-4 sm:p-5 md:p-6">
                 <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <div className="bg-purple-500 rounded-xl p-2 sm:p-3 flex items-center justify-center flex-shrink-0">
+                  <div className="bg-neutral-900 rounded-xl p-2 sm:p-3 flex items-center justify-center flex-shrink-0">
                     <svg width="24" height="24" className="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M6.855 19.725c0 1.391-1.164 2.52-2.6 2.52-1.436 0-2.6-1.129-2.6-2.52 0-1.392 1.164-2.521 2.6-2.521h2.6v2.521zm1.3 0c0-1.392 1.164-2.521 2.6-2.521 1.436 0 2.6 1.129 2.6 2.521v6.303c0 1.392-1.164 2.521-2.6 2.521-1.436 0-2.6-1.129-2.6-2.521v-6.303z" fill="white"/>
                       <path d="M12.245 6.855c-1.436 0-2.6-1.129-2.6-2.521 0-1.391 1.164-2.52 2.6-2.52 1.436 0 2.6 1.129 2.6 2.52v2.521h-2.6zm0 1.3c1.436 0 2.6 1.129 2.6 2.521 0 1.392-1.164 2.521-2.6 2.521H5.942c-1.436 0-2.6-1.129-2.6-2.521 0-1.392 1.164-2.521 2.6-2.521h6.303z" fill="white"/>
@@ -236,7 +236,7 @@ export function UpcomingFeaturesSection() {
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-lg sm:text-xl md:text-2xl font-bold">Slack Integration</h3>
-                    <Badge className="mt-1 text-xs sm:text-sm bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20">
+                    <Badge className="mt-1 text-xs sm:text-sm bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20">
                       Coming Soon
                     </Badge>
                   </div>
@@ -247,8 +247,8 @@ export function UpcomingFeaturesSection() {
                 </p>
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="bg-purple-500/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
-                      <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" />
+                    <div className="bg-neutral-900/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
+                      <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-600 dark:text-neutral-400" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-xs sm:text-sm mb-1">Direct AI Chat</h4>
@@ -258,8 +258,8 @@ export function UpcomingFeaturesSection() {
                     </div>
                   </div>
                   <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="bg-purple-500/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
-                      <Send className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" />
+                    <div className="bg-neutral-900/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
+                      <Send className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-600 dark:text-neutral-400" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-xs sm:text-sm mb-1">Quick Actions</h4>
@@ -269,8 +269,8 @@ export function UpcomingFeaturesSection() {
                     </div>
                   </div>
                   <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="bg-purple-500/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
-                      <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400" />
+                    <div className="bg-neutral-900/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
+                      <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-600 dark:text-neutral-400" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-xs sm:text-sm mb-1">Team Collaboration</h4>
@@ -292,9 +292,9 @@ export function UpcomingFeaturesSection() {
             transition={{ delay: 0.4 }}
           >
             <Card className="border-2 h-full hover:shadow-xl transition-all duration-300 overflow-hidden">
-              <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 p-4 sm:p-5 md:p-6">
+              <div className="bg-gradient-to-br from-neutral-900/10 to-neutral-900/10 p-4 sm:p-5 md:p-6">
                 <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <div className="bg-green-500 rounded-xl p-2 sm:p-3 flex items-center justify-center flex-shrink-0">
+                  <div className="bg-neutral-900 rounded-xl p-2 sm:p-3 flex items-center justify-center flex-shrink-0">
                     <svg width="24" height="24" className="sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M16 2C8.268 2 2 8.268 2 16c0 2.524.668 4.891 1.836 6.939L2 30l7.178-1.822C11.156 29.287 13.486 30 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.333c-2.089 0-4.044-.554-5.733-1.511l-.411-.243-4.244 1.078 1.089-4.089-.27-.429C6.133 20.844 5.333 18.511 5.333 16 5.333 10.11 10.11 5.333 16 5.333S26.667 10.11 26.667 16 21.89 26.667 16 27.333z" fill="white"/>
                       <path d="M21.733 18.711c-.355-.178-2.089-1.023-2.411-1.134-.322-.112-.556-.178-.789.178-.233.356-.911 1.134-1.112 1.378-.2.244-.4.267-.756.089-.356-.178-1.489-.533-2.844-1.689-1.044-.911-1.756-2.044-1.956-2.4-.2-.356-.022-.533.15-.711.155-.156.356-.4.533-.6.178-.2.244-.356.356-.6.111-.244.056-.444-.022-.622-.089-.178-.789-1.956-1.089-2.689-.289-.711-.6-.6-.789-.622-.2-.022-.444-.022-.689-.022-.244 0-.644.089-.989.444-.344.356-1.311 1.289-1.311 3.133 0 1.844 1.333 3.622 1.511 3.889.178.267 2.578 3.933 6.244 5.489.873.367 1.556.589 2.089.756.889.278 1.689.244 2.333.156.711-.1 2.089-.867 2.378-1.711.289-.844.289-1.556.2-1.711-.089-.156-.333-.244-.689-.422z" fill="white"/>
@@ -302,7 +302,7 @@ export function UpcomingFeaturesSection() {
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-lg sm:text-xl md:text-2xl font-bold">WhatsApp Integration</h3>
-                    <Badge className="mt-1 text-xs sm:text-sm bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                    <Badge className="mt-1 text-xs sm:text-sm bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20">
                       Coming Soon
                     </Badge>
                   </div>
@@ -313,8 +313,8 @@ export function UpcomingFeaturesSection() {
                 </p>
                 <div className="space-y-2 sm:space-y-3">
                   <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="bg-green-500/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
-                      <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400" />
+                    <div className="bg-neutral-900/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
+                      <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-600 dark:text-neutral-400" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-xs sm:text-sm mb-1">Voice & Text Commands</h4>
@@ -324,8 +324,8 @@ export function UpcomingFeaturesSection() {
                     </div>
                   </div>
                   <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="bg-green-500/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
-                      <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400" />
+                    <div className="bg-neutral-900/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
+                      <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-600 dark:text-neutral-400" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-xs sm:text-sm mb-1">AI Assistant on Mobile</h4>
@@ -335,8 +335,8 @@ export function UpcomingFeaturesSection() {
                     </div>
                   </div>
                   <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="bg-green-500/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
-                      <Send className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 dark:text-green-400" />
+                    <div className="bg-neutral-900/20 rounded-lg p-1.5 sm:p-2 mt-0.5 flex-shrink-0">
+                      <Send className="h-3 w-3 sm:h-4 sm:w-4 text-neutral-600 dark:text-neutral-400" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-semibold text-xs sm:text-sm mb-1">Instant Notifications</h4>

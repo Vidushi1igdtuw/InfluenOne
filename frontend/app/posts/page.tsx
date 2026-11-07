@@ -271,7 +271,7 @@ export default function PostsPage() {
                       </div>
                       <div className="flex-shrink-0">
                         {post.linkedin_post_url ? (
-                          <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/30 px-2 py-1 text-xs font-semibold w-full sm:w-auto justify-center">
+                          <Badge variant="outline" className="bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/30 px-2 py-1 text-xs font-semibold w-full sm:w-auto justify-center">
                             ✓ Posted
                           </Badge>
                         ) : (
@@ -301,7 +301,7 @@ export default function PostsPage() {
                                 className="h-8 shadow-sm flex-1 sm:flex-initial px-2"
                                 disabled={tippingPost === post.id}
                               >
-                                <Heart className="h-3.5 w-3.5 mr-1 text-pink-500" />
+                                <Heart className="h-3.5 w-3.5 mr-1 text-neutral-500" />
                                 <span className="sm:hidden text-xs">Tip</span>
                                 <span className="hidden sm:inline text-xs">Tip</span>
                               </Button>
@@ -315,7 +315,7 @@ export default function PostsPage() {
                                 className="h-8 shadow-sm flex-1 sm:flex-initial px-2"
                               >
                                 {copiedUrl === post.linkedin_post_url ? (
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-neutral-600" />
                                 ) : (
                                   <Copy className="h-3.5 w-3.5" />
                                 )}

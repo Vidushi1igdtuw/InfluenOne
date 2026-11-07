@@ -28,7 +28,7 @@ export default function AgentPage() {
       </div>
 
       <div className="lab-glass space-y-3 rounded-2xl p-6 font-mono text-sm">
-        <p className="text-[11px] uppercase tracking-widest text-[#3D8BD3]">agent.address</p>
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground">agent.address</p>
         <p className="break-all">{BRAND.agentAddress}</p>
         <div className="flex flex-wrap gap-2 pt-2">
           <Button onClick={copy} variant="outline" className="rounded-full">

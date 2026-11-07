@@ -363,8 +363,8 @@ export default function URLToPostPage() {
 
               {result.linkedin_post_url ? (
                 <div className="space-y-2">
-                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                    <p className="text-sm text-green-600 dark:text-green-400 font-medium mb-2">
+                  <div className="p-3 bg-neutral-900/10 border border-neutral-500/20 rounded-lg">
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 font-medium mb-2">
                       ✅ Posted to LinkedIn!
                     </p>
                     <Button

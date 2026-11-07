@@ -15,8 +15,8 @@ const config: Config = {
         mono: ['var(--font-plex)', 'ui-monospace', 'monospace'],
       },
       colors: {
-        lab: '#3D8BD3',
-        hack: '#5F43F1',
+        lab: '#0a0a0a',
+        hack: '#171717',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

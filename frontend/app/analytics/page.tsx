@@ -160,8 +160,8 @@ export default function AnalyticsPage() {
             </CardHeader>
             <CardContent className="p-3 sm:p-4 pt-0">
               <div className="flex items-center justify-between">
-                <div className="text-xl sm:text-2xl font-bold text-green-600">{analytics.total_earned.toFixed(2)}</div>
-                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 flex-shrink-0" />
+                <div className="text-xl sm:text-2xl font-bold text-neutral-600">{analytics.total_earned.toFixed(2)}</div>
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-neutral-600 flex-shrink-0" />
               </div>
               <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">From tips & commissions</p>
             </CardContent>

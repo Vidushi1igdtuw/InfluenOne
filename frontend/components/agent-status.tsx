@@ -26,7 +26,7 @@ export function AgentStatus({ className }: { className?: string }) {
 
   return (
     <div className={cn('flex items-center gap-2 text-xs', className)}>
-      <Radio className={cn('h-3.5 w-3.5', live ? 'text-emerald-400' : live === false ? 'text-amber-400' : 'text-muted-foreground')} />
+      <Radio className={cn('h-3.5 w-3.5', live ? 'text-neutral-400' : live === false ? 'text-neutral-400' : 'text-muted-foreground')} />
       <span className="font-mono uppercase tracking-widest">
         {live ? `${BRAND.agentName} live` : live === false ? 'Agent offline' : 'Pinging agent…'}
       </span>

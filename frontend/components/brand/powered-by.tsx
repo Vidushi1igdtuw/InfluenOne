@@ -8,11 +8,11 @@ export function PoweredByAsi({ className }: { className?: string }) {
       target="_blank"
       rel="noreferrer"
       className={cn(
-        'inline-flex items-center gap-2 rounded-full border border-[#5F43F1]/40 bg-[#5F43F1]/10 px-3 py-1 text-[11px] font-medium tracking-wide text-primary hover:bg-[#5F43F1]/20',
+        'inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-medium tracking-wide text-primary hover:bg-primary/10',
         className
       )}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-[#3D8BD3] shadow-[0_0_8px_#3D8BD3]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-[#737373] shadow-[0_0_8px_hsl(0_0%_0%_/_0.35)]" />
       Powered by ASI:One only
     </a>
   )

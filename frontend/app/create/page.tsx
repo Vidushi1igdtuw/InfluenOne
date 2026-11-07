@@ -194,7 +194,7 @@ export default function CreatePostPage() {
                 <div className="text-muted-foreground">No activity yet</div>
               ) : (
                 log.map((e, i) => (
-                  <div key={i} className={e.type === 'error' ? 'text-destructive' : e.type === 'success' ? 'text-green-600 dark:text-green-400' : ''}>
+                  <div key={i} className={e.type === 'error' ? 'text-destructive' : e.type === 'success' ? 'text-neutral-600 dark:text-neutral-400' : ''}>
                     [{e.ts}] {e.msg}
                   </div>
                 ))

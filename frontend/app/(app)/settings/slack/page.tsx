@@ -27,7 +27,7 @@ export default function SlackSettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20">
+            <Badge variant="outline" className="bg-neutral-900/10 text-neutral-600 dark:text-neutral-400 border-neutral-500/20">
               <Clock className="h-3 w-3 mr-1" />
               Coming Soon
             </Badge>

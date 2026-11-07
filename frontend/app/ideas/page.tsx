@@ -177,7 +177,7 @@ export default function IdeasPage() {
                         className="shrink-0"
                       >
                         {copiedIndex === index ? (
-                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <CheckCircle2 className="h-4 w-4 text-neutral-500" />
                         ) : (
                           <Copy className="h-4 w-4" />
                         )}

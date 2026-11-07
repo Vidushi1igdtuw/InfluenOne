@@ -35,7 +35,7 @@ export default function SignupPage() {
           <BrandMark />
           <h1 className="mt-10 text-5xl font-semibold tracking-tight">
             Join the lab.
-            <span className="mt-2 block bg-gradient-to-r from-[#5F43F1] to-[#3D8BD3] bg-clip-text text-transparent">
+            <span className="mt-2 block bg-gradient-to-r from-neutral-900 to-neutral-900 bg-clip-text text-transparent">
               Powered by ASI:One.
             </span>
           </h1>

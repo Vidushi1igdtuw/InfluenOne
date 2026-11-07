@@ -20,7 +20,7 @@ export function HeroSection() {
           className="space-y-4"
         >
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-4">
-            <Badge variant="outline" className="bg-[#3D8BD3]/10 text-[#3D8BD3] border-[#3D8BD3]/30 text-xs sm:text-sm">
+            <Badge variant="outline" className="bg-muted text-muted-foreground border-border text-xs sm:text-sm">
               Innovation Lab
             </Badge>
             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs sm:text-sm">
