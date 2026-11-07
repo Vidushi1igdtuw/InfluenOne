@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { usePayment } from '@/contexts/PaymentContext'
-import { SERVICE_PRICES, type PaymentConfig, type ServiceKey } from '@/lib/payments'
+import { WEB_PACK_USES, type PaymentConfig, type ServiceKey } from '@/lib/payments'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { CreditCard, Coins, CheckCircle2, Loader2, ExternalLink } from 'lucide-react'
+import { CreditCard, CheckCircle2, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import api from '@/lib/api'
 
 interface PaymentModalProps {
-  service: keyof typeof SERVICE_PRICES
+  service: ServiceKey
   serviceName: string
   onSuccess: (txHash: string) => void
   onCancel: () => void
@@ -27,11 +26,9 @@ export function PaymentModal({
 }: PaymentModalProps) {
   const { refreshPaymentStatus } = usePayment()
   const [config, setConfig] = useState<PaymentConfig | null>(null)
-  const [method, setMethod] = useState<'pick' | 'stripe' | 'fet' | 'success'>('pick')
+  const [method, setMethod] = useState<'pay' | 'success'>('pay')
   const [processing, setProcessing] = useState(false)
   const [txHash, setTxHash] = useState<string | null>(null)
-  const [explorerUrl, setExplorerUrl] = useState<string | null>(null)
-  const [fetHash, setFetHash] = useState('')
 
   useEffect(() => {
     api.get('/api/payment/config').then(({ data }) => setConfig(data)).catch(() => setConfig(null))
@@ -78,31 +75,8 @@ export function PaymentModal({
     }
   }
 
-  const payFet = async () => {
-    if (!fetHash.trim()) {
-      toast.error('Paste the FET transaction hash')
-      return
-    }
-    setProcessing(true)
-    try {
-      const { data } = await api.post('/api/payment/verify', {
-        txHash: fetHash.trim(),
-        service,
-        amount: config?.fet_amount || '5',
-        method: 'fet',
-      })
-      if (!data.success) throw new Error(data.error || 'FET verification failed')
-      setTxHash(data.tx_hash)
-      setExplorerUrl(data.explorer_url || null)
-      setMethod('success')
-      await refreshPaymentStatus()
-      await onServiceCall()
-      onSuccess(data.tx_hash)
-    } catch (error: any) {
-      toast.error(error?.message || 'FET payment failed')
-      setProcessing(false)
-    }
-  }
+  const packUses = config?.pack_uses || WEB_PACK_USES
+  const price = config?.stripe_amount_usd || '4.99'
 
   if (method === 'success') {
     return (
@@ -111,14 +85,9 @@ export function PaymentModal({
           <div className="flex flex-col items-center justify-center space-y-4 py-8">
             <CheckCircle2 className="h-16 w-16 text-green-500" />
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold">Payment Successful</h3>
+              <h3 className="text-xl font-bold">Pack unlocked</h3>
+              <p className="text-sm text-muted-foreground">{packUses} uses added. Generate, URL-to-post, and schedule are included.</p>
               {txHash && <p className="text-xs text-muted-foreground font-mono break-all">{txHash}</p>}
-              {explorerUrl && (
-                <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary hover:underline">
-                  <ExternalLink className="h-4 w-4" />
-                  View on explorer
-                </a>
-              )}
             </div>
           </div>
         </CardContent>
@@ -129,59 +98,24 @@ export function PaymentModal({
   return (
     <Card className="border-2">
       <CardHeader>
-        <CardTitle>Unlock {serviceName}</CardTitle>
-        <CardDescription>Pay by card (Stripe) or FET. Same unlock either way.</CardDescription>
+        <CardTitle>Creator pack — {serviceName}</CardTitle>
+        <CardDescription>
+          ${price} on Stripe. {packUses} uses of full access (generate, URL-to-post, schedule, post).
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {method === 'pick' && (
-          <div className="grid gap-3">
-            <Button onClick={payStripe} disabled={processing || config?.stripe_ready === false} size="lg" className="w-full">
-              {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
-              Pay ${config?.stripe_amount_usd || '4.99'} with card
-            </Button>
-            <Button onClick={() => setMethod('fet')} variant="outline" size="lg" className="w-full" disabled={processing}>
-              <Coins className="mr-2 h-4 w-4" />
-              Pay {config?.fet_amount || '5'} FET
-            </Button>
-            <Button onClick={onCancel} variant="ghost" disabled={processing}>
-              Cancel
-            </Button>
-          </div>
-        )}
-
-        {method === 'fet' && (
-          <div className="space-y-3">
-            <div className="bg-muted rounded-lg p-4 space-y-2 text-sm">
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Network</span>
-                <span className="font-medium">{config?.fet_network || 'testnet'}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-muted-foreground">Amount</span>
-                <span className="font-medium">{config?.fet_amount || '5'} FET</span>
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-1">Send to</p>
-                <p className="font-mono text-xs break-all">{config?.fet_address || 'Set FET_WALLET_ADDRESS on the backend'}</p>
-              </div>
-            </div>
-            <Input
-              placeholder="Paste FET transaction hash"
-              value={fetHash}
-              onChange={(e) => setFetHash(e.target.value)}
-              disabled={processing}
-            />
-            <div className="flex gap-2">
-              <Button onClick={() => setMethod('pick')} variant="outline" className="flex-1" disabled={processing}>
-                Back
-              </Button>
-              <Button onClick={payFet} className="flex-1" disabled={processing}>
-                {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                I paid, verify
-              </Button>
-            </div>
-          </div>
-        )}
+        <ul className="text-sm text-muted-foreground space-y-1">
+          <li>{packUses} AI generations on the website</li>
+          <li>ASI:One chat is 1 use per card payment</li>
+          <li>Test card: 4242 4242 4242 4242</li>
+        </ul>
+        <Button onClick={payStripe} disabled={processing || config?.stripe_ready === false} size="lg" className="w-full">
+          {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CreditCard className="mr-2 h-4 w-4" />}
+          Pay ${price} with Stripe
+        </Button>
+        <Button onClick={onCancel} variant="ghost" disabled={processing} className="w-full">
+          Cancel
+        </Button>
       </CardContent>
     </Card>
   )

@@ -3,50 +3,43 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Coins, Zap, Shield, CheckCircle2, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { CreditCard, Zap, Shield, CheckCircle2 } from 'lucide-react'
 
 const services = [
   {
-    name: 'Dashboard Access',
-    price: 'Stripe or FET',
-    description: 'Unlock full access to all features',
+    name: 'Creator pack',
+    price: '$4.99',
+    description: '10 uses of full access: generate, URL-to-post, schedule, publish',
     icon: Shield,
   },
   {
-    name: 'AI Post Generation',
-    price: 'Stripe or FET',
-    description: 'Generate engaging posts with AI',
+    name: 'ASI:One generation',
+    price: '1 use',
+    description: 'Each pack use writes a post with live web search + optional image',
     icon: Zap,
   },
   {
+    name: 'ASI:One chat',
+    price: '1 / pay',
+    description: 'In ASI:One, one card payment unlocks one generation',
+    icon: CreditCard,
+  },
+  {
     name: 'Create & Post',
-    price: 'Stripe or FET',
-    description: 'Create and publish posts instantly',
+    price: 'In pack',
+    description: 'Publish to LinkedIn while uses remain',
     icon: CheckCircle2,
   },
   {
     name: 'Schedule Posts',
-    price: 'Stripe or FET',
-    description: 'Schedule posts for optimal timing',
+    price: 'In pack',
+    description: 'Schedule while your pack still has uses',
     icon: CheckCircle2,
   },
   {
     name: 'URL to Post',
-    price: 'Stripe or FET',
-    description: 'Convert URLs into LinkedIn posts',
-    icon: CheckCircle2,
-  },
-  {
-    name: 'Post Ideas',
-    price: 'FREE',
-    description: 'Generate creative post ideas (no payment required)',
-    icon: CheckCircle2,
-  },
-  {
-    name: 'Templates',
-    price: 'Stripe or FET',
-    description: 'Save and reuse post templates',
+    price: '1 use',
+    description: 'Scrape the page, search the live web, write the post',
     icon: CheckCircle2,
   },
 ]
@@ -62,15 +55,15 @@ export function PaymentSection() {
       >
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-sm sm:text-base md:text-lg px-3 sm:px-4 py-1.5 sm:py-2">
-            <Coins className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-            Stripe and FET
+            <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+            Stripe packs
           </Badge>
         </div>
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4">
-          Pay with <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">card or FET</span>
+          Simple SaaS pricing. <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Card only on the web.</span>
         </h2>
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-4 sm:mb-6">
-          Card via Stripe, or FET on Fetch Network. Same unlock either way.
+          $4.99 unlocks 10 uses of full access. ASI:One chat is 1 use per payment.
         </p>
         <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
@@ -79,15 +72,11 @@ export function PaymentSection() {
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span>Instant transactions</span>
+            <span>10 website uses</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span>Near-zero fees</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
-            <span>Blockchain verified</span>
+            <span>1 ASI:One use</span>
           </div>
         </div>
       </motion.div>
@@ -118,56 +107,6 @@ export function PaymentSection() {
           </motion.div>
         ))}
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="max-w-4xl mx-auto"
-      >
-        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="p-4 sm:p-6 md:p-8">
-            <div className="text-center space-y-4 sm:space-y-6">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">Why FET/Stripe?</h3>
-              <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 text-left">
-                <div>
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <Zap className="h-5 w-5 text-primary" />
-                    Lightning Fast
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Transactions complete in under a second via 1Sat Ordinals protocol
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-primary" />
-                    Fully Collateralized
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    1:1 backed by U.S. Treasury bills and cash equivalents
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <Coins className="h-5 w-5 text-primary" />
-                    Low Fees
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    Near-zero transaction fees, perfect for micropayments
-                  </p>
-                </div>
-              </div>
-              <div className="pt-6 border-t">
-                <p className="text-sm text-muted-foreground mb-4">
-                  Use Stripe test cards locally, or send testnet FET to the address shown at checkout.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
     </section>
   )
 }
-

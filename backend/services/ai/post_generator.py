@@ -1,4 +1,4 @@
-"""LinkedIn post generation using ASI-1."""
+"""LinkedIn post generation using ASI:One."""
 
 import re
 from typing import Dict, Optional

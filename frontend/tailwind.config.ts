@@ -11,9 +11,12 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-quicksand)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-space)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-plex)', 'ui-monospace', 'monospace'],
       },
       colors: {
+        lab: '#3D8BD3',
+        hack: '#5F43F1',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

@@ -40,13 +40,11 @@ def register_scheduler_handlers(agent, scheduler_service, payment_service):
                 return {"message": "", "error": "Either schedule (cron expression) or scheduled_at (ISO datetime) is required"}
             
             
-            # Payment MUST be done before scheduling - check payment status
-            payment_status = await payment_service.check_user_payment_status(req.user_id, "linkedin_post")
-            if not payment_status.get("has_paid"):
+            if not await payment_service.has_publish_access(req.user_id):
                 return {
-                    "message": "", 
-                    "error": "Payment required. Please pay Stripe or FET before scheduling.",
-                    "payment_required": True
+                    "message": "",
+                    "error": "Payment required. Buy a Stripe pack (10 uses) first.",
+                    "payment_required": True,
                 }
             
             include_image = req.include_image or req.includeImage or False

@@ -139,7 +139,7 @@ export default function TransactionsPage() {
                   Transaction History
                 </CardTitle>
                 <CardDescription>
-                  View all your FET/Stripe payment transactions with blockchain explorer links
+                  View your Stripe pack payments
                 </CardDescription>
               </div>
               <Button

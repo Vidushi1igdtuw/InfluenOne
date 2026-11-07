@@ -20,7 +20,7 @@ from rest_models import (
     VerifyPaymentRESTResponse,
 )
 from utils.auth import get_user_id_from_token
-from utils.constants import FET_AMOUNT, STRIPE_AMOUNT_USD
+from utils.constants import FET_AMOUNT, STRIPE_AMOUNT_USD, WEB_PACK_USES
 
 
 def register_payment_handlers(agent, payment_service):
@@ -31,6 +31,8 @@ def register_payment_handlers(agent, payment_service):
             success=True,
             stripe_amount_usd=STRIPE_AMOUNT_USD,
             stripe_ready=payment_service.stripe_ready(),
+            pack_uses=WEB_PACK_USES,
+            website_stripe_only=True,
             fet_amount=cfg["amount"],
             fet_address=cfg["address"],
             fet_network=cfg["network"],
@@ -96,6 +98,8 @@ def register_payment_handlers(agent, payment_service):
             payment_date=result.get("payment_date"),
             tx_hash=result.get("tx_hash"),
             amount=result.get("amount"),
+            credits_remaining=int(result.get("credits_remaining") or 0),
+            pack_size=int(result.get("pack_size") or WEB_PACK_USES),
             error=result.get("error"),
         )
 
@@ -106,10 +110,13 @@ def register_payment_handlers(agent, payment_service):
             return DashboardAccessRESTResponse(has_access=False, has_paid=False, error="Authentication required")
         result = await payment_service.check_user_payment_status(user_id)
         has_paid = result.get("has_paid", False)
+        remaining = int(result.get("credits_remaining") or 0)
         return DashboardAccessRESTResponse(
             has_access=has_paid,
             has_paid=has_paid,
-            message="Access granted" if has_paid else "Payment required",
+            credits_remaining=remaining,
+            pack_size=int(result.get("pack_size") or WEB_PACK_USES),
+            message=f"{remaining} uses left" if has_paid else "Stripe pack required",
         )
 
     @agent.on_rest_get("/api/payment/history", PaymentHistoryRESTResponse)

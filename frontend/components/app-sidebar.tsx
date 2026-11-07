@@ -1,22 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLinkedIn } from '@/contexts/LinkedInContext'
-// Slack integration temporarily disabled
-// import { useSlack } from '@/contexts/SlackContext'
+import { usePayment } from '@/contexts/PaymentContext'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { BrandMark } from '@/components/brand/mark'
+import { AgentStatus } from '@/components/agent-status'
 import {
   LayoutDashboard,
   PenSquare,
-  Bot,
+  Sparkles,
   Calendar,
   LogOut,
   Link2,
@@ -31,73 +31,31 @@ import {
   FileText,
   History,
   BarChart3,
-  MessageSquare,
-  Clock,
+  Mic,
+  Images,
+  Radio,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/create', icon: PenSquare, label: 'Create Post' },
-  { href: '/ai', icon: Bot, label: 'AI Generator' },
-  { href: '/schedule', icon: Calendar, label: 'Scheduler' },
-  { href: '/posts', icon: FileText, label: 'My Posts' },
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Command' },
+  { href: '/ai', icon: Sparkles, label: 'Studio' },
+  { href: '/url-to-post', icon: Link2, label: 'URL → post' },
+  { href: '/voice', icon: Mic, label: 'Voice kit' },
+  { href: '/gallery', icon: Images, label: 'Gallery' },
+  { href: '/create', icon: PenSquare, label: 'Write' },
+  { href: '/schedule', icon: Calendar, label: 'Schedule' },
+  { href: '/posts', icon: FileText, label: 'Posts' },
   { href: '/analytics', icon: BarChart3, label: 'Analytics' },
-  { href: '/transactions', icon: History, label: 'Transaction History' },
-  { href: '/settings/slack', icon: MessageSquare, label: 'Slack' },
+  { href: '/agent', icon: Radio, label: 'Agentverse' },
+  { href: '/transactions', icon: History, label: 'Payments' },
 ]
-
-function SlackStatusCard({ isCollapsed, isMobileView }: { isCollapsed: boolean; isMobileView: boolean }) {
-  // Slack integration temporarily disabled - showing "Coming Soon"
-  return (
-    <Card className="p-3 sm:p-4 space-y-2 sm:space-y-3 border-border/50">
-      <AnimatePresence>
-        {(!isCollapsed || isMobileView) && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-sm font-semibold"
-          >
-            Slack
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className="space-y-2">
-        <Badge 
-          variant="outline" 
-          className={cn(
-            "w-full gap-2 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-            (isCollapsed && !isMobileView) ? "justify-center px-2" : "justify-center"
-          )}
-        >
-          <Clock className="h-3 w-3 flex-shrink-0" />
-          <AnimatePresence>
-            {(!isCollapsed || isMobileView) && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                exit={{ opacity: 0, width: 0 }}
-              >
-                Coming Soon
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </Badge>
-        {(!isCollapsed || isMobileView) && (
-          <p className="text-xs text-muted-foreground">
-            Slack integration coming soon!
-          </p>
-        )}
-      </div>
-    </Card>
-  )
-}
 
 export function AppSidebar() {
   const pathname = usePathname()
   const { logout } = useAuth()
   const { connected, checking, profile, connect, disconnect } = useLinkedIn()
+  const { creditsRemaining, packSize, hasPaid } = usePayment()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -105,339 +63,136 @@ export function AppSidebar() {
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
-      if (window.innerWidth >= 768) {
-        setIsMobileOpen(false)
-      }
+      if (window.innerWidth >= 768) setIsMobileOpen(false)
     }
-    
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileOpen(false)
   }, [pathname])
 
-  const SidebarContent = ({ isMobileView = false }: { isMobileView?: boolean }) => (
-    <div className="flex flex-col h-full">
-      {/* Header with Toggle - Hidden on mobile since we have fixed header */}
-      {!isMobileView && (
-        <div className={cn(
-          "p-4 sm:p-5 border-b border-border/50 flex items-center gap-2",
-          isCollapsed ? "justify-center" : "justify-between"
-        )}>
-          {isCollapsed ? (
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground grid place-items-center flex-shrink-0">
-              <Link2 className="h-4 w-4" />
-            </div>
-          ) : (
-            <>
-              <AnimatePresence>
-                {!isCollapsed && (
-                  <motion.div
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0"
-                  >
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary text-primary-foreground grid place-items-center flex-shrink-0">
-                      <Link2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm sm:text-base font-bold truncate">InfluenOne</div>
-                      <div className="text-xs text-muted-foreground truncate">Automation</div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="h-8 w-8 flex-shrink-0"
-              >
-                {isCollapsed ? (
-                  <ChevronRight className="h-4 w-4" />
-                ) : (
-                  <ChevronLeft className="h-4 w-4" />
-                )}
-              </Button>
-            </>
-          )}
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 sm:space-y-4 pb-2">
-        {/* Navigation */}
-        <nav className="space-y-1.5">
-          <AnimatePresence>
-            {(!isCollapsed || isMobileView) && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-3"
-              >
-                Overview
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {navItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link key={item.href} href={item.href} className="block">
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    'w-full gap-3 h-11 rounded-lg transition-all duration-200',
-                    isActive 
-                      ? 'bg-primary text-primary-foreground font-semibold shadow-sm hover:bg-primary/90' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50',
-                    (isCollapsed && !isMobileView) ? 'justify-center px-0' : 'justify-start px-3'
-                  )}
-                  title={(isCollapsed && !isMobileView) ? item.label : undefined}
-                >
-                  <item.icon className={cn(
-                    "h-4 w-4 flex-shrink-0",
-                    isActive && "text-primary-foreground"
-                  )} />
-                  <AnimatePresence>
-                    {(!isCollapsed || isMobileView) && (
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        exit={{ opacity: 0, width: 0 }}
-                        className="truncate text-sm"
-                      >
-                        {item.label}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </Button>
-              </Link>
-            )
-          })}
-        </nav>
-
-        {(!isCollapsed || isMobileView) && (
-          <Card className="p-3 sm:p-4 border-border/50 space-y-2">
-            <Badge variant="outline" className="w-fit border-primary/40 text-primary">Innovation Lab</Badge>
-            <p className="text-xs text-muted-foreground">ASI-1 · Stripe or FET</p>
-          </Card>
+  const SidebarContent = ({ isMobileView = false }: { isMobileView?: boolean }) => {
+    const showLabel = !isCollapsed || isMobileView
+    return (
+      <div className="flex h-full flex-col">
+        {!isMobileView && (
+          <div className={cn('flex items-center border-b border-border p-3', isCollapsed ? 'flex-col gap-2' : 'justify-between p-4')}>
+            <BrandMark compact={isCollapsed} href="/dashboard" />
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setIsCollapsed(!isCollapsed)}>
+              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </Button>
+          </div>
         )}
 
-        {/* LinkedIn Status */}
-        <Card className="p-3 sm:p-4 space-y-2 sm:space-y-3 border-border/50">
-          <AnimatePresence>
-            {(!isCollapsed || isMobileView) && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm font-semibold"
-              >
-                LinkedIn
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div className="space-y-2">
+        <div className="flex-1 space-y-3 overflow-y-auto p-3 sm:p-4">
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Link key={item.href} href={item.href} className="block">
+                  <Button
+                    variant="ghost"
+                    title={item.label}
+                    className={cn(
+                      'h-10 w-full gap-3 rounded-xl',
+                      isActive
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                      showLabel ? 'justify-start px-3' : 'justify-center px-0'
+                    )}
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    {showLabel && <span className="truncate text-sm">{item.label}</span>}
+                  </Button>
+                </Link>
+              )
+            })}
+          </nav>
+
+          {showLabel && (
+            <div className="lab-glass space-y-2 rounded-xl p-3">
+              <Badge variant="outline" className="border-[#3D8BD3]/40 text-secondary">Innovation Lab</Badge>
+              <p className="text-xs text-muted-foreground">
+                {hasPaid ? `${creditsRemaining} / ${packSize} ASI:One uses` : 'Stripe pack · 10 uses'}
+              </p>
+              <AgentStatus />
+            </div>
+          )}
+
+          <div className="lab-glass space-y-2 rounded-xl p-3">
+            {showLabel && <div className="text-xs font-medium">LinkedIn</div>}
             {checking ? (
-              <div className={cn(
-                "flex items-center gap-2 text-muted-foreground text-sm",
-                (isCollapsed && !isMobileView) && "justify-center"
-              )}>
-                <Loader2 className="h-4 w-4 animate-spin flex-shrink-0" />
-                <AnimatePresence>
-                  {(!isCollapsed || isMobileView) && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                    >
-                      Checking...
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {showLabel && <span>Checking…</span>}
               </div>
             ) : connected ? (
               <>
-                {profile && (!isCollapsed || isMobileView) && (
-                  <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                    <Avatar className="h-8 w-8 flex-shrink-0">
+                {profile && showLabel && (
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
                       <AvatarImage src={profile.picture} alt={profile.name || 'LinkedIn'} />
                       <AvatarFallback>
                         {profile.name ? profile.name.charAt(0).toUpperCase() : <User className="h-3 w-3" />}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium truncate">{profile.name || 'LinkedIn User'}</div>
-                      {profile.email && (
-                        <div className="text-xs text-muted-foreground truncate">{profile.email}</div>
-                      )}
+                    <div className="min-w-0">
+                      <div className="truncate text-xs font-medium">{profile.name || 'LinkedIn'}</div>
                     </div>
                   </div>
                 )}
-                <Badge 
-                  variant="outline" 
-                  className={cn(
-                    "w-full gap-2 bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
-                    (isCollapsed && !isMobileView) ? "justify-center px-2" : "justify-center"
-                  )}
-                >
-                  <CheckCircle2 className="h-3 w-3 flex-shrink-0" />
-                  <AnimatePresence>
-                    {(!isCollapsed || isMobileView) && (
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        exit={{ opacity: 0, width: 0 }}
-                      >
-                        Connected
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
+                <Badge variant="outline" className="w-full justify-center gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" />
+                  {showLabel && 'Live'}
                 </Badge>
-                <Button
-                  onClick={disconnect}
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "w-full",
-                    (isCollapsed && !isMobileView) ? "justify-center px-0" : ""
-                  )}
-                  title={(isCollapsed && !isMobileView) ? "Disconnect" : undefined}
-                >
-                  <Link2Off className="h-4 w-4 flex-shrink-0" />
-                  <AnimatePresence>
-                    {(!isCollapsed || isMobileView) && (
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        exit={{ opacity: 0, width: 0 }}
-                        className="ml-2"
-                      >
-                        Disconnect
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
+                <Button onClick={disconnect} variant="outline" size="sm" className="w-full">
+                  <Link2Off className="h-4 w-4" />
+                  {showLabel && <span className="ml-2">Disconnect</span>}
                 </Button>
               </>
             ) : (
-              <Button 
-                onClick={connect} 
-                className={cn(
-                  "w-full",
-                  (isCollapsed && !isMobileView) ? "justify-center px-0" : ""
-                )}
-                size="sm"
-                title={(isCollapsed && !isMobileView) ? "Connect LinkedIn" : undefined}
-              >
-                <Link2 className="h-4 w-4 flex-shrink-0" />
-                <AnimatePresence>
-                  {(!isCollapsed || isMobileView) && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      className="ml-2"
-                    >
-                      Connect LinkedIn
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+              <Button onClick={connect} size="sm" className="w-full">
+                <Link2 className="h-4 w-4" />
+                {showLabel && <span className="ml-2">Connect</span>}
               </Button>
             )}
           </div>
-        </Card>
+        </div>
 
-        {/* Slack Status */}
-        <SlackStatusCard isCollapsed={isCollapsed} isMobileView={isMobileView} />
-      </div>
-
-      {/* Bottom Section - Theme Toggle & Logout */}
-      <div className="p-3 sm:p-4 border-t border-border/50 space-y-2 mt-auto flex-shrink-0">
-        <div className={cn(
-          "flex items-center gap-2",
-          (isCollapsed && !isMobileView) && "justify-center"
-        )}>
+        <div className="mt-auto flex items-center gap-2 border-t border-border p-3">
           <ThemeToggle />
-          <Button
-            onClick={logout}
-            variant="ghost"
-            className={cn(
-              "gap-2",
-              (isCollapsed && !isMobileView) ? "flex-1 justify-center px-0" : "flex-1 justify-start"
-            )}
-            title={(isCollapsed && !isMobileView) ? "Logout" : undefined}
-          >
-            <LogOut className="h-4 w-4 flex-shrink-0" />
-            <AnimatePresence>
-              {(!isCollapsed || isMobileView) && (
-                <motion.span
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  exit={{ opacity: 0, width: 0 }}
-                >
-                  Logout
-                </motion.span>
-              )}
-            </AnimatePresence>
+          <Button onClick={logout} variant="ghost" className={cn('flex-1 gap-2', showLabel ? 'justify-start' : 'justify-center px-0')}>
+            <LogOut className="h-4 w-4" />
+            {showLabel && 'Logout'}
           </Button>
         </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <>
-      {/* Mobile Header Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/95 dark:bg-background/95 backdrop-blur-md border-b border-border/50">
-        <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3 max-w-7xl">
-          <div className="flex items-center justify-between gap-2 min-h-[44px] sm:min-h-[48px]">
-            <Link href="/dashboard" className="flex items-center gap-2 flex-shrink-0 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary text-primary-foreground grid place-items-center flex-shrink-0">
-                <Link2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              </div>
-              <span className="text-sm sm:text-base font-bold truncate">InfluenOne</span>
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="h-9 w-9 sm:h-10 sm:w-10 flex-shrink-0 touch-manipulation"
-              aria-label={isMobileOpen ? "Close menu" : "Open menu"}
-            >
-              {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-          </div>
+      <div className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md md:hidden">
+        <div className="flex min-h-[52px] items-center justify-between px-3">
+          <BrandMark href="/dashboard" />
+          <Button variant="ghost" size="icon" onClick={() => setIsMobileOpen(!isMobileOpen)}>
+            {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
         </div>
       </div>
 
-      {/* Mobile Overlay */}
-      <AnimatePresence>
-        {isMobileOpen && isMobile && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsMobileOpen(false)}
-            className="md:hidden fixed inset-0 bg-black/50 z-40"
-          />
+      <aside
+        className={cn(
+          'sticky top-0 hidden h-screen flex-col border-r border-border bg-card/40 backdrop-blur-xl md:flex',
+          isCollapsed ? 'w-16 min-w-[64px]' : 'w-full max-w-[272px]'
         )}
-      </AnimatePresence>
-
-      {/* Desktop Sidebar */}
-      <aside className={cn(
-        "hidden md:flex flex-col border-r border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300 h-screen sticky top-0 shadow-sm",
-        isCollapsed ? "w-16 min-w-[64px]" : "w-full max-w-[280px]"
-      )}>
+      >
         <SidebarContent />
       </aside>
 
-      {/* Mobile Sidebar */}
       <AnimatePresence>
         {isMobileOpen && isMobile && (
           <>
@@ -446,16 +201,15 @@ export function AppSidebar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileOpen(false)}
-              className="md:hidden fixed inset-0 bg-black/50 z-40"
+              className="fixed inset-0 z-40 bg-black/60 md:hidden"
             />
             <motion.aside
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="md:hidden fixed left-0 top-[48px] sm:top-[56px] h-[calc(100vh-48px)] sm:h-[calc(100vh-56px)] w-[280px] max-w-[85vw] z-50 bg-card/50 backdrop-blur-sm border-r border-border/50 shadow-sm overflow-y-auto"
+              className="fixed left-0 top-[52px] z-50 h-[calc(100vh-52px)] w-[280px] overflow-y-auto border-r border-border bg-card/95 backdrop-blur-xl md:hidden"
             >
-              <SidebarContent isMobileView={true} />
+              <SidebarContent isMobileView />
             </motion.aside>
           </>
         )}

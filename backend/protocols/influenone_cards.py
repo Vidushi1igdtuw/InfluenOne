@@ -22,12 +22,16 @@ KNOWN_ACTIONS = {
 }
 
 
+ASI_ONE_CHAT_URL = "https://asi1.ai/ai/agent1q2yfrx8tg5mynwjcy2ferlkhhw2qq9rdxrplqj6ck4hrravv32dxz9pw4hp"
+
+
 def menu_card() -> dict[str, Any]:
     return {
         "title": "InfluenOne",
         "summary_rows": [
-            {"label": "Model", "value": "ASI-1"},
-            {"label": "Pay", "value": "Card (Stripe) or FET"},
+            {"label": "Model", "value": "ASI:One"},
+            {"label": "Pay", "value": "1 use / Stripe card"},
+            {"label": "Chat", "value": ASI_ONE_CHAT_URL},
         ],
         "ctas": [
             {
@@ -58,7 +62,7 @@ def generate_form() -> dict[str, Any]:
                 "kind": "text",
                 "label": "Topic",
                 "required": True,
-                "placeholder": "What I learned shipping with ASI-1",
+                "placeholder": "What I learned shipping with ASI:One",
                 "multiline": True,
             },
             {
@@ -158,12 +162,21 @@ async def send_card(
     )
 
 
+def _with_asi_link(text: str) -> str:
+    suffix = f"\n\nOpen me in ASI:One: {ASI_ONE_CHAT_URL}"
+    if ASI_ONE_CHAT_URL in text:
+        return text
+    return text.rstrip() + suffix
+
+
 async def send_menu(ctx: Context, sender: str, narration: str | None = None) -> None:
     await send_card(
         ctx,
         sender,
-        narration
-        or "ASI-1 writes the post. Pay with Stripe (card) or FET, then publish.",
+        _with_asi_link(
+            narration
+            or "Type a topic or paste a URL — same as chatting with Veo3. Or use the buttons. Stripe card = 1 use, then I write the post + graphic."
+        ),
         card_kind="detail",
         card_payload=menu_card(),
     )

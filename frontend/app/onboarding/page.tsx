@@ -14,8 +14,8 @@ import { useState } from 'react'
 const steps = [
   {
     icon: Coins,
-    title: 'Pay with Stripe or FET',
-    description: 'Pay Stripe or FET to unlock dashboard access and all features.',
+    title: 'Buy a Stripe pack',
+    description: '$4.99 for 10 uses of full access. Website is Stripe only.',
     required: true,
   },
   {
@@ -42,25 +42,27 @@ export default function OnboardingPage() {
   const [showPayment, setShowPayment] = useState(false)
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="w-full max-w-4xl space-y-6">
+    <div className="relative min-h-screen flex items-center justify-center p-4">
+      <div className="lab-mesh pointer-events-none absolute inset-0" />
+      <div className="relative z-10 w-full max-w-4xl space-y-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Let's get you set up
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Powered by ASI:One</p>
+          <h1 className="text-4xl font-semibold tracking-tight mt-2">
+            Enter the lab
           </h1>
           <p className="text-muted-foreground text-lg mt-2">
-            Three quick steps to start posting like a pro.
+            Pay, connect LinkedIn, then generate with ASI:One.
           </p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {steps.map((step, index) => {
-            const isPaymentStep = step.title === 'Pay with Stripe or FET'
+            const isPaymentStep = step.title === 'Buy a Stripe pack'
             const isCompleted = isPaymentStep ? hasPaid : (step.title === 'Connect LinkedIn' ? connected : false)
             
             return (

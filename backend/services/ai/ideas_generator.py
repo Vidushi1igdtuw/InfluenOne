@@ -1,4 +1,4 @@
-"""LinkedIn post ideas via ASI-1."""
+"""LinkedIn post ideas via ASI:One."""
 
 from __future__ import annotations
 

@@ -9,12 +9,26 @@ from typing import Dict, Optional
 from supabase import Client
 
 import fet_service
-from utils.constants import FET_AMOUNT, STRIPE_AMOUNT_USD
+from utils.constants import FET_AMOUNT, STRIPE_AMOUNT_USD, pack_uses_for
 
 try:
     import stripe
 except ImportError:  # pragma: no cover
     stripe = None
+
+
+def _stripe_meta(session) -> dict:
+    """Stripe metadata is a StripeObject, not a dict."""
+    meta = getattr(session, "metadata", None)
+    if meta is None:
+        return {}
+    to_dict = getattr(meta, "to_dict", None)
+    if callable(to_dict):
+        data = to_dict()
+        return data if isinstance(data, dict) else {}
+    if isinstance(meta, dict):
+        return meta
+    return {}
 
 
 class PaymentService:
@@ -28,28 +42,132 @@ class PaymentService:
     def stripe_ready(self) -> bool:
         return bool(stripe and self.stripe_key)
 
-    async def check_user_payment_status(self, user_id: str, service: str = None) -> Dict:
-        if not self.supabase_admin:
-            return {"has_paid": False, "error": "Database not configured"}
+    async def get_credit_status(self, user_id: str) -> Dict:
+        if not self.supabase_admin or not user_id:
+            return {"remaining": 0, "pack_size": pack_uses_for(user_id or ""), "has_paid": False}
+        pack = pack_uses_for(user_id)
         try:
-            query = self.supabase_admin.table("payments").select("*").eq("user_id", user_id).eq("status", "verified")
-            if service and service != "dashboard_access":
-                result = query.in_("service", [service, "dashboard_access"]).order("created_at", desc=True).limit(1).execute()
-            else:
-                service_to_check = service or "dashboard_access"
-                result = query.eq("service", service_to_check).order("created_at", desc=True).limit(1).execute()
-            if result.data:
-                payment = result.data[0]
-                return {
-                    "has_paid": True,
-                    "payment_date": payment.get("created_at"),
-                    "tx_hash": payment.get("tx_hash"),
-                    "amount": payment.get("amount"),
-                    "service": payment.get("service"),
-                }
-            return {"has_paid": False}
+            row = (
+                self.supabase_admin.table("usage_credits")
+                .select("*")
+                .eq("user_id", user_id)
+                .limit(1)
+                .execute()
+            )
+            if row.data:
+                remaining = int(row.data[0].get("remaining") or 0)
+                return {"remaining": remaining, "pack_size": pack, "has_paid": remaining > 0}
+            paid = (
+                self.supabase_admin.table("payments")
+                .select("id,created_at,tx_hash,amount,service")
+                .eq("user_id", user_id)
+                .eq("status", "verified")
+                .order("created_at", desc=True)
+                .limit(1)
+                .execute()
+            )
+            if paid.data:
+                await self.grant_credits(user_id, pack)
+                return {"remaining": pack, "pack_size": pack, "has_paid": True}
+            return {"remaining": 0, "pack_size": pack, "has_paid": False}
         except Exception as e:  # noqa: BLE001
-            return {"has_paid": False, "error": str(e)}
+            return {"remaining": 0, "pack_size": pack, "has_paid": False, "error": str(e)}
+
+    async def grant_credits(self, user_id: str, amount: int | None = None) -> Dict:
+        if not self.supabase_admin or not user_id:
+            return {"success": False, "error": "Database not configured"}
+        add = int(amount if amount is not None else pack_uses_for(user_id))
+        if add < 1:
+            return {"success": False, "error": "Invalid credit grant"}
+        try:
+            existing = (
+                self.supabase_admin.table("usage_credits")
+                .select("*")
+                .eq("user_id", user_id)
+                .limit(1)
+                .execute()
+            )
+            now = datetime.now(timezone.utc).isoformat()
+            if existing.data:
+                remaining = int(existing.data[0].get("remaining") or 0) + add
+                total = int(existing.data[0].get("total_granted") or 0) + add
+                self.supabase_admin.table("usage_credits").update(
+                    {"remaining": remaining, "total_granted": total, "updated_at": now}
+                ).eq("user_id", user_id).execute()
+                return {"success": True, "remaining": remaining}
+            self.supabase_admin.table("usage_credits").insert(
+                {"user_id": user_id, "remaining": add, "total_granted": add, "updated_at": now}
+            ).execute()
+            return {"success": True, "remaining": add}
+        except Exception as e:  # noqa: BLE001
+            return {"success": False, "error": str(e)}
+
+    async def consume_credit(self, user_id: str, service: str = "") -> Dict:
+        status = await self.get_credit_status(user_id)
+        remaining = int(status.get("remaining") or 0)
+        if remaining < 1:
+            pack = pack_uses_for(user_id)
+            if str(user_id).startswith("agent1"):
+                msg = "Pay with card for 1 ASI:One use."
+            else:
+                msg = f"Pack used up. Pay with Stripe for {pack} more uses."
+            return {"success": False, "has_paid": False, "remaining": 0, "error": msg}
+        try:
+            now = datetime.now(timezone.utc).isoformat()
+            self.supabase_admin.table("usage_credits").update(
+                {"remaining": remaining - 1, "updated_at": now}
+            ).eq("user_id", user_id).execute()
+            return {"success": True, "has_paid": True, "remaining": remaining - 1, "service": service}
+        except Exception as e:  # noqa: BLE001
+            return {"success": False, "error": str(e), "remaining": remaining}
+
+    async def has_publish_access(self, user_id: str) -> bool:
+        """Publishing a saved draft does not need a remaining use — only a prior pack."""
+        if not self.supabase_admin or not user_id:
+            return False
+        try:
+            row = (
+                self.supabase_admin.table("usage_credits")
+                .select("remaining,total_granted")
+                .eq("user_id", user_id)
+                .limit(1)
+                .execute()
+            )
+            if row.data:
+                remaining = int(row.data[0].get("remaining") or 0)
+                granted = int(row.data[0].get("total_granted") or 0)
+                return remaining > 0 or granted > 0
+        except Exception:
+            return False
+        credits = await self.get_credit_status(user_id)
+        return int(credits.get("remaining") or 0) > 0
+
+    async def require_credit(self, user_id: str) -> Optional[str]:
+        status = await self.get_credit_status(user_id)
+        if status.get("remaining", 0) > 0:
+            return None
+        pack = pack_uses_for(user_id)
+        if str(user_id).startswith("agent1"):
+            return "Payment required. Pay with card for 1 ASI:One use."
+        return f"Payment required. Stripe pack: {pack} uses for ${STRIPE_AMOUNT_USD}."
+
+    async def check_user_payment_status(self, user_id: str, service: str = None) -> Dict:
+        credits = await self.get_credit_status(user_id)
+        remaining = int(credits.get("remaining") or 0)
+        pack = credits.get("pack_size") or pack_uses_for(user_id)
+        if remaining > 0:
+            return {
+                "has_paid": True,
+                "credits_remaining": remaining,
+                "pack_size": pack,
+                "service": service,
+            }
+        return {
+            "has_paid": False,
+            "credits_remaining": 0,
+            "pack_size": pack,
+            "error": credits.get("error"),
+        }
 
     async def record_payment(self, user_id: str, tx_hash: str, amount: str, service: str = "dashboard_access") -> Dict:
         if not self.supabase_admin:
@@ -65,6 +183,7 @@ class PaymentService:
             }
             result = self.supabase_admin.table("payments").insert(payment_data).execute()
             if result.data:
+                await self.grant_credits(user_id, pack_uses_for(user_id))
                 return {"success": True, "payment_id": result.data[0].get("id"), "payment": result.data[0]}
             existing = self.supabase_admin.table("payments").select("*").eq("tx_hash", tx_hash).eq("service", service).execute()
             if existing.data:
@@ -124,20 +243,30 @@ class PaymentService:
         if not self.stripe_ready():
             return {"success": False, "error": "Stripe is not configured (STRIPE_SECRET_KEY)"}
         cents = int(round(float(STRIPE_AMOUNT_USD) * 100))
+        uses = pack_uses_for(user_id)
+        if uses == 1:
+            product_name = "InfluenOne — 1 ASI:One use"
+            product_desc = f"One generation in ASI:One. Service: {service.replace('_', ' ')}"
+        else:
+            product_name = f"InfluenOne Creator Pack — {uses} uses"
+            product_desc = f"{uses} website uses of full access (generate, URL-to-post, schedule, post). Service: {service.replace('_', ' ')}"
         try:
             session = stripe.checkout.Session.create(
                 mode="payment",
                 success_url=success_url,
                 cancel_url=cancel_url,
                 client_reference_id=user_id,
-                metadata={"user_id": user_id, "service": service},
+                metadata={"user_id": user_id, "service": service, "pack_uses": str(uses)},
                 line_items=[
                     {
                         "quantity": 1,
                         "price_data": {
                             "currency": "usd",
                             "unit_amount": cents,
-                            "product_data": {"name": f"InfluenOne — {service.replace('_', ' ')}"},
+                            "product_data": {
+                                "name": product_name,
+                                "description": product_desc,
+                            },
                         },
                     }
                 ],
@@ -155,7 +284,7 @@ class PaymentService:
             return {"success": False, "error": f"Stripe session lookup failed: {e}"}
         if session.payment_status != "paid":
             return {"success": False, "error": f"Stripe session is {session.payment_status}, not paid"}
-        meta_user = (session.metadata or {}).get("user_id") or session.client_reference_id
+        meta_user = _stripe_meta(session).get("user_id") or getattr(session, "client_reference_id", None)
         if meta_user and str(meta_user) != str(user_id):
             return {"success": False, "error": "This checkout session belongs to another account"}
         amount = STRIPE_AMOUNT_USD

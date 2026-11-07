@@ -22,14 +22,13 @@ def register_post_handlers(agent, ai_service, linkedin_service, payment_service,
             if not req.user_id:
                 return {"error": "Authentication required"}
             
-            # Payment check required for URL to post conversion
-            payment_status = await payment_service.check_user_payment_status(req.user_id, "url_to_post")
-            if not payment_status.get("has_paid"):
+            need_pay = await payment_service.require_credit(req.user_id)
+            if need_pay:
                 return {
                     "text": "",
                     "hashtags": [],
                     "source_url": req.url,
-                    "error": "Payment required. Please make a FET/Stripe payment to convert URL to post."
+                    "error": need_pay,
                 }
             
             include_image = req.include_image or req.includeImage or False
@@ -72,6 +71,7 @@ def register_post_handlers(agent, ai_service, linkedin_service, payment_service,
                 except Exception as save_error:
                     pass
             
+            await payment_service.consume_credit(req.user_id, "url_to_post")
             return {
                 "text": result.get("text", ""),
                 "hashtags": result.get("hashtags", []),

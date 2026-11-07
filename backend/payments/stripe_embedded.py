@@ -1,8 +1,9 @@
-"""Stripe embedded Checkout for ASI:One Payment Protocol (Innovation Lab pattern).
+"""Stripe embedded Checkout for ASI:One Payment Protocol (7 Nov 2026).
 
-RequestPayment.metadata["stripe"] must be string-valued:
-client_secret, checkout_session_id, publishable_key, amount_cents, ui_mode.
-Buyer CommitPayment.transaction_id == checkout_session_id.
+Stripe Checkout ui_mode is `embedded_page` (the old value `embedded` is rejected).
+RequestPayment.metadata["stripe"] values must be strings
+(dict[str, str | dict[str, str]]). Buyer CommitPayment.transaction_id
+is the Checkout Session id.
 """
 
 from __future__ import annotations
@@ -13,6 +14,10 @@ from typing import Any
 from uuid import uuid4
 
 from utils.constants import STRIPE_AMOUNT_USD
+
+# ASI:One/Agentverse must keep the user in chat after embedded Checkout.
+# Do not use the website dashboard URL here.
+AGENTVERSE_RETURN = "https://agentverse.ai/payment-success"
 
 
 def _stripe_sdk():
@@ -33,7 +38,10 @@ def is_stripe_configured() -> bool:
 
 def amount_cents() -> int:
     try:
-        return int(round(float(os.getenv("STRIPE_AMOUNT_CENTS") or STRIPE_AMOUNT_USD or "4.99") * 100))
+        raw = os.getenv("STRIPE_AMOUNT_CENTS") or STRIPE_AMOUNT_USD or "4.99"
+        if str(raw).isdigit():
+            return int(raw)
+        return int(round(float(raw) * 100))
     except Exception:
         return 499
 
@@ -55,7 +63,7 @@ def create_embedded_checkout_session(
     stripe.api_key = secret
     cents = amount_cents()
     currency = (os.getenv("STRIPE_CURRENCY") or "usd").strip().lower()
-    success_url = os.getenv("STRIPE_SUCCESS_URL", "https://agentverse.ai/payment-success")
+    success_url = os.getenv("STRIPE_CHAT_SUCCESS_URL") or AGENTVERSE_RETURN
     expires_in = max(1800, min(24 * 60 * 60, int(os.getenv("STRIPE_CHECKOUT_EXPIRES_SECONDS") or "1800")))
     expires_at = int(time.time()) + expires_in
     payment_reference = f"{user_address}:{chat_session_id}:{uuid4().hex[:8]}"
@@ -66,15 +74,14 @@ def create_embedded_checkout_session(
     if payment_request_id:
         return_url += f"&payment_request_id={payment_request_id}"
 
-    txn_description = f"InfluenOneAgent {service} - {description}".strip()
-    idem = f"{user_address}:{chat_session_id}:{payment_request_id or ''}:{service}"[:255]
+    txn_description = f"InfluenOne 1 ASI:One use — {description}".strip()[:500]
+    idem = f"{user_address}:{chat_session_id}:{payment_request_id or ''}:{service}:embedded_page"[:255]
 
     try:
         session = stripe.checkout.Session.create(
             idempotency_key=idem,
             ui_mode="embedded_page",
             redirect_on_completion="if_required",
-            payment_method_types=["card"],
             mode="payment",
             return_url=return_url,
             expires_at=expires_at,
@@ -83,7 +90,7 @@ def create_embedded_checkout_session(
                     "price_data": {
                         "currency": currency,
                         "product_data": {
-                            "name": "InfluenOne LinkedIn post",
+                            "name": "InfluenOne — 1 ASI:One use",
                             "description": txn_description,
                         },
                         "unit_amount": cents,
@@ -91,14 +98,6 @@ def create_embedded_checkout_session(
                     "quantity": 1,
                 }
             ],
-            payment_intent_data={
-                "description": txn_description,
-                "metadata": {
-                    "agent": "InfluenOneAgent",
-                    "service": service,
-                    "payment_reference": payment_reference,
-                },
-            },
             metadata={
                 "user_address": user_address,
                 "session_id": chat_session_id,
@@ -107,8 +106,10 @@ def create_embedded_checkout_session(
                 "service": service,
             },
         )
+        # Nested metadata values MUST be strings for RequestPayment.
         return {
             "client_secret": str(session.client_secret or ""),
+            "id": str(session.id or ""),
             "checkout_session_id": str(session.id or ""),
             "publishable_key": str(publishable),
             "currency": currency,
@@ -129,12 +130,15 @@ def verify_checkout_session_paid(checkout_session_id: str) -> dict[str, Any]:
         session = stripe.checkout.Session.retrieve(checkout_session_id)
         paid = getattr(session, "payment_status", None) == "paid"
         amount_total = getattr(session, "amount_total", None)
+        if isinstance(amount_total, (int, float)):
+            amount = f"{amount_total / 100:.2f}"
+        else:
+            amount = STRIPE_AMOUNT_USD
         return {
             "verified": bool(paid),
             "checkout_session_id": checkout_session_id,
-            "status": getattr(session, "payment_status", None),
-            "amount": f"{(amount_total or 0) / 100:.2f}" if amount_total is not None else STRIPE_AMOUNT_USD,
-            "metadata": dict(getattr(session, "metadata", None) or {}),
+            "status": str(getattr(session, "payment_status", "") or ""),
+            "amount": amount,
         }
     except Exception as exc:  # noqa: BLE001
         return {"verified": False, "error": str(exc)}

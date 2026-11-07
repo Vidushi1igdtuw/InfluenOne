@@ -27,7 +27,7 @@ export function HeroSection() {
               Stranger Builds
             </Badge>
             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs sm:text-sm">
-              ASI:One · ASI-1
+              ASI:One
             </Badge>
             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs sm:text-sm">
               <Shield className="h-3 w-3 mr-2" />
@@ -37,21 +37,21 @@ export function HeroSection() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold tracking-tight px-2 sm:px-4">
             LinkedIn content agent, powered by{' '}
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              ASI-1
+              ASI:One
             </span>
           </h1>
           <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-muted-foreground max-w-2xl mx-auto px-2 sm:px-4">
-            Generate, schedule, and post. Pay with Stripe or FET. Same flow — Fetch.ai Innovation Lab colours.
+            Generate, schedule, and post. Website packs are Stripe only — 10 uses of full access.
           </p>
           <div className="mt-4 sm:mt-6 p-3 sm:p-4 md:p-5 rounded-xl bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 border-2 border-primary/20 max-w-2xl mx-auto">
             <div className="flex items-start gap-2 sm:gap-3">
               <Coins className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary mt-0.5 flex-shrink-0" />
               <div className="text-left flex-1 min-w-0">
                 <p className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-foreground mb-1">
-                  Stripe or FET
+                  Stripe creator pack
                 </p>
                 <p className="text-xs sm:text-sm md:text-base text-muted-foreground break-words">
-                  Card via Stripe Checkout, or FET on Fetch Network. Same unlock either way.
+                  $4.99 for 10 website uses. ASI:One chat is 1 use per card payment.
                 </p>
               </div>
             </div>

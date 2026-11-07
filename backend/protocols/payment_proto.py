@@ -1,13 +1,12 @@
-"""Payment Protocol seller: Stripe embedded card checkout (Innovation Lab quiz/nano-banana pattern).
+"""Payment Protocol seller: Stripe embedded card (Innovation Lab, Nov 2026).
 
-ASI:One renders the native Pay with Stripe card from RequestPayment.
-Do not send a text bubble in the same turn — it swallows the payment card.
+ASI:One renders Checkout from RequestPayment.metadata["stripe"] with
+ui_mode="embedded". Stripe only — do not mix FET into accepted_funds.
 """
 
 from __future__ import annotations
 
 import os
-from typing import Any
 from uuid import uuid4
 
 from uagents import Context, Protocol
@@ -27,8 +26,7 @@ from payments.stripe_embedded import (
     is_stripe_configured,
     verify_checkout_session_paid,
 )
-from protocols.influenone_cards import send_menu
-from utils.constants import FET_AMOUNT, FET_WALLET_ADDRESS, STRIPE_AMOUNT_USD
+from utils.constants import STRIPE_AMOUNT_USD
 
 payment_proto = Protocol(spec=payment_protocol_spec, role="seller")
 
@@ -40,6 +38,23 @@ def _amount_str() -> str:
         return f"{amount_cents() / 100:.2f}"
     except Exception:
         return str(STRIPE_AMOUNT_USD)
+
+
+def stash_pending(ctx: Context, sender: str, action: str, **fields: str) -> None:
+    session_id = str(ctx.session)
+    ctx.storage.set(f"pending_action:{sender}:{session_id}", action)
+    for key, value in fields.items():
+        ctx.storage.set(f"pending_{key}:{sender}:{session_id}", value or "")
+
+
+def pop_pending(ctx: Context, sender: str) -> dict[str, str]:
+    session_id = str(ctx.session)
+    action = str(ctx.storage.get(f"pending_action:{sender}:{session_id}") or "")
+    pending = {"action": action}
+    for key in ("topic", "url", "language"):
+        pending[key] = str(ctx.storage.get(f"pending_{key}:{sender}:{session_id}") or "")
+    ctx.storage.set(f"pending_action:{sender}:{session_id}", "")
+    return pending
 
 
 async def request_stripe_payment(ctx: Context, sender: str, *, service: str = "linkedin_post") -> None:
@@ -54,7 +69,7 @@ async def request_stripe_payment(ctx: Context, sender: str, *, service: str = "l
 
     session_id = str(ctx.session)
     amount_str = _amount_str()
-    desc = f"Pay ${amount_str} to unlock InfluenOne (generate → post)"
+    desc = f"Pay ${amount_str} for 1 ASI:One use"
     checkout = create_embedded_checkout_session(
         user_address=sender,
         chat_session_id=session_id,
@@ -74,21 +89,20 @@ async def request_stripe_payment(ctx: Context, sender: str, *, service: str = "l
     ctx.storage.set(f"stripe_session:{sender}:{session_id}", checkout.get("checkout_session_id", ""))
     ctx.storage.set(f"stripe_service:{sender}:{session_id}", service)
 
-    accepted = [Funds(currency="USD", amount=amount_str, payment_method="stripe")]
-    metadata: dict[str, Any] = {"stripe": checkout, "service": service, "agent": "InfluenOneAgent"}
-    if FET_WALLET_ADDRESS:
-        accepted.append(Funds(currency="FET", amount=str(FET_AMOUNT), payment_method="fet"))
-        metadata["fet_wallet"] = FET_WALLET_ADDRESS
+    ctx.logger.info(
+        f"Stripe RequestPayment ui_mode={checkout.get('ui_mode')} "
+        f"session={(checkout.get('checkout_session_id') or '')[:20]}…"
+    )
 
     await ctx.send(
         sender,
         RequestPayment(
-            accepted_funds=accepted,
+            accepted_funds=[Funds(currency="USD", amount=amount_str, payment_method="stripe")],
             recipient=str(ctx.agent.address),
             deadline_seconds=PAYMENT_DEADLINE_SECONDS,
             reference=session_id,
             description=desc,
-            metadata=metadata,
+            metadata={"stripe": checkout, "service": service},
         ),
     )
 
@@ -102,44 +116,65 @@ async def handle_commit(ctx: Context, sender: str, msg: CommitPayment):
     checkout_id = stored or tx_id
     service = str(ctx.storage.get(f"stripe_service:{sender}:{session_id}") or "linkedin_post")
 
-    verified = False
-    amount = _amount_str()
-    if method == "stripe" or (checkout_id or "").startswith("cs_"):
+    if method and method != "stripe":
+        await ctx.send(sender, RejectPayment(reason="Card payment only (Stripe)."))
+        return
+    if not checkout_id:
+        await ctx.send(sender, RejectPayment(reason="Missing Stripe checkout session."))
+        return
+
+    try:
         result = verify_checkout_session_paid(checkout_id)
-        verified = bool(result.get("verified"))
-        amount = str(result.get("amount") or amount)
-    elif method in {"fet", "fet_direct"} and tx_id:
-        from fet_service import verify_transfer
+    except Exception as exc:  # noqa: BLE001
+        await ctx.send(
+            sender,
+            CancelPayment(transaction_id=tx_id or checkout_id, reason=str(exc)[:180]),
+        )
+        return
 
-        result = await verify_transfer(tx_id)
-        verified = bool(result.get("success"))
-        amount = str(result.get("amount") or FET_AMOUNT)
-
-    if not verified:
+    if not result.get("verified"):
         await ctx.send(
             sender,
             CancelPayment(
-                transaction_id=tx_id or checkout_id or None,
-                reason="Payment not confirmed yet. Finish Stripe checkout or send a FET tx hash.",
+                transaction_id=tx_id or checkout_id,
+                reason=str(result.get("error") or "Finish Stripe checkout, then tap Pay again."),
             ),
         )
         return
 
-    await ctx.send(
-        sender,
-        CompletePayment(transaction_id=tx_id or checkout_id),
-    )
+    amount = str(result.get("amount") or _amount_str())
+    await ctx.send(sender, CompletePayment(transaction_id=tx_id or checkout_id))
     ctx.storage.set(f"paid:{sender}:{session_id}", True)
     try:
+        from supabase import create_client
+
         from payment_service import PaymentService
 
-        svc = PaymentService()
+        url = os.getenv("SUPABASE_URL", "")
+        key = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_KEY") or ""
+        client = create_client(url, key) if url and key else None
+        svc = PaymentService(client, client)
         await svc.record_payment(sender, tx_id or checkout_id, amount, service)
-    except Exception:
-        pass
-    await send_menu(ctx, sender, "Payment confirmed. Generate a post when you are ready.")
+    except Exception as exc:  # noqa: BLE001
+        ctx.logger.error(f"record_payment failed: {exc}")
+
+    try:
+        from handlers.chat_handlers import fulfill_pending_job
+
+        await fulfill_pending_job(ctx, sender)
+    except Exception as exc:  # noqa: BLE001
+        ctx.logger.error(f"fulfill after pay failed: {exc}")
+        from protocol import create_text_chat
+
+        await ctx.send(
+            sender,
+            create_text_chat("Payment received. Send the topic or URL again and I will generate (1 use already paid)."),
+        )
 
 
 @payment_proto.on_message(RejectPayment)
 async def handle_reject(ctx: Context, sender: str, msg: RejectPayment):
-    await send_menu(ctx, sender, "Payment cancelled. You can pay with card whenever you are ready.")
+    from protocols.influenone_cards import send_menu
+
+    pop_pending(ctx, sender)
+    await send_menu(ctx, sender, "Payment cancelled. Pay with Stripe card when you are ready.")

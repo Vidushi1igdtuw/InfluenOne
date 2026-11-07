@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { LabAtmosphere } from '@/components/brand/atmosphere'
+import { BrandMark } from '@/components/brand/mark'
+import { PoweredByAsi } from '@/components/brand/powered-by'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle2, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
   const { login, loading, jwt } = useAuth()
@@ -19,157 +21,72 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
-    if (jwt) {
-      router.replace('/')
-    }
+    if (jwt) router.replace('/')
   }, [jwt, router])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    login(email, password)
-  }
-
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Left Section - Marketing */}
-      <div className="hidden lg:flex lg:w-[60%] flex-col justify-between p-16 bg-gradient-to-br from-primary/5 via-background to-muted/20">
-        <div className="space-y-16">
-          <div className="flex justify-between items-center">
-            <div className="text-2xl font-bold">InfluenOne</div>
-          </div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-lg space-y-8"
-          >
-            <h1 className="text-5xl font-bold leading-tight tracking-tight">
-              The one tool you need for everything related to LinkedIn content.
-            </h1>
-            <div className="space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="text-lg">Easy to use</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="text-lg">Verified LinkedIn Partner</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="text-lg">AI that captures your writing style</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="space-y-4"
-        >
-          <div className="flex items-center gap-0">
-            {[...Array(10)].map((_, i) => (
-              <div
-                key={i}
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border-2 border-background -ml-2 first:ml-0"
-              />
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <span key={i} className="text-yellow-500 text-xl">★</span>
-              ))}
-            </div>
-            <span className="text-muted-foreground ml-1">Join 100,000+ users</span>
-          </div>
+    <div className="relative min-h-screen">
+      <LabAtmosphere />
+      <div className="relative z-10 mx-auto grid min-h-screen max-w-6xl items-center gap-10 px-4 py-10 lg:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="hidden lg:block">
+          <BrandMark />
+          <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">
+            Fetch.ai Innovation Lab
+          </p>
+          <h1 className="mt-3 text-5xl font-semibold tracking-tight">
+            Intent in.
+            <span className="mt-2 block bg-gradient-to-r from-[#5F43F1] to-[#3D8BD3] bg-clip-text text-transparent">
+              LinkedIn out.
+            </span>
+          </h1>
+          <p className="mt-4 max-w-md text-muted-foreground">
+            ASI:One writes. The agent posts. Powered by ASI:One.
+          </p>
+          <PoweredByAsi className="mt-6" />
         </motion.div>
-      </div>
 
-      {/* Right Section - Login Form */}
-      <div className="flex-1 lg:w-[40%] flex items-center justify-center p-4 sm:p-8 lg:p-16">
-        <div className="w-full max-w-7xl">
-          <div className="flex justify-between items-center mb-8 lg:hidden">
-            <div className="text-xl font-bold">InfluenOne</div>
-            <Link href="/signup" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Sign up
-            </Link>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="lab-glass mx-auto w-full max-w-md rounded-3xl p-6 sm:p-8">
+          <div className="mb-6 flex items-center justify-between lg:hidden">
+            <BrandMark />
+            <Link href="/signup" className="text-sm text-muted-foreground">Sign up</Link>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+          <h2 className="text-2xl font-semibold">Enter the lab</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Log in to the ASI:One studio</p>
+          <form
+            className="mt-6 space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault()
+              login(email, password)
+            }}
           >
-            <Card className="border shadow-lg w-full">
-              <CardHeader className="space-y-1 pb-6">
-                <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-                <CardDescription className="text-base">Log in to manage your LinkedIn automation</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="h-11"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                      <span className="text-xs text-muted-foreground">Min. 6 characters</span>
-                    </div>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="h-11 pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-11 text-base font-medium"
-                    size="lg"
-                  >
-                    {loading ? 'Logging in...' : 'Log in'}
-                  </Button>
-                </form>
-                <div className="text-center text-sm text-muted-foreground pt-2">
-                  No account?{' '}
-                  <Link href="/signup" className="text-primary hover:underline font-medium">
-                    Create one
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-11 pr-10"
+                />
+                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <Button type="submit" disabled={loading} className="h-11 w-full rounded-full" size="lg">
+              {loading ? 'Opening…' : 'Continue'}
+            </Button>
+          </form>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            New here? <Link href="/signup" className="text-primary">Create an account</Link>
+          </p>
+        </motion.div>
       </div>
     </div>
   )

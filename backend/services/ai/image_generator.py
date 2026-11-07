@@ -1,7 +1,11 @@
-"""Image generation is not available on ASI-1 (text model). Keep the old API so callers don't crash."""
+"""ASI:One image generation — POST /v1/image/generate."""
 
 from typing import Optional
+
 from uagents import Context
+
+from services.ai.asi1 import ASI1Error, generate_image
+from services.ai.image_store import persist_generated_image
 
 
 class ImageGenerator:
@@ -15,4 +19,15 @@ class ImageGenerator:
         return False
 
     async def generate(self, prompt: str, topic: Optional[str] = None, ctx: Optional[Context] = None) -> Optional[str]:
-        return None
+        text = (prompt or topic or "").strip()
+        if not text:
+            return None
+        try:
+            url = await generate_image(text, size="1792x1024")
+            url = persist_generated_image(url)
+            self._last_image_url = url
+            return url
+        except ASI1Error as exc:
+            if ctx:
+                ctx.logger.error(f"ASI:One image failed: {exc}")
+            return None

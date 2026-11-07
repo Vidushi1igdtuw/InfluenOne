@@ -31,7 +31,7 @@ class AIService:
         return await self.post_generator.generate_image_prompt(topic)
 
     async def generate_image(self, prompt: str, topic: Optional[str] = None, ctx: Optional[Context] = None) -> Optional[str]:
-        """Image generation is not available with ASI-1 (text only). User photo upload still works."""
+        """Generate a LinkedIn graphic via ASI:One /v1/image/generate."""
         return await self.image_generator.generate(prompt, topic, ctx)
 
     def handle_image_response(self, sender: str, msg) -> bool:
@@ -39,7 +39,7 @@ class AIService:
         return self.image_generator.handle_response(sender, msg)
 
     async def generate_linkedin_post_with_image(self, topic: str, include_image: bool = False, language: str = "en", ctx: Optional[Context] = None) -> Dict:
-        """Generate a LinkedIn post. Photos come from user upload, not ASI-1."""
+        """Generate a LinkedIn post, optionally with an ASI:One image."""
         post = await self.generate_linkedin_post(topic, True, language)
 
         if include_image:
@@ -48,6 +48,8 @@ class AIService:
             result = {**post, "image_prompt": image_prompt}
             if image_url:
                 result["image_url"] = image_url
+            else:
+                result["image_error"] = "Image generation failed"
             return result
 
         return post

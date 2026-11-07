@@ -12,9 +12,13 @@ export const SERVICE_PRICES = {
 
 export type ServiceKey = keyof typeof SERVICE_PRICES
 
+export const WEB_PACK_USES = 10
+
 export interface PaymentConfig {
   stripe_amount_usd: string
   stripe_ready: boolean
+  pack_uses: number
+  website_stripe_only: boolean
   fet_amount: string
   fet_address: string
   fet_network: string

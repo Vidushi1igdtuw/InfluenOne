@@ -5,37 +5,39 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Code2, Database, Zap, Shield, Coins, Globe } from 'lucide-react'
 import { MermaidDiagram } from '@/components/mermaid-diagram'
+import { LandingHeader } from '@/components/landing/header'
+import { LandingFooter } from '@/components/landing/footer'
 
 export default function TechStackPage() {
 
   const techStack = [
     {
       category: 'Frontend',
-      items: ['Next.js 14', 'React 18', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'shadcn/ui', 'Sonner Toast'],
+      items: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Space Grotesk'],
       icon: Code2,
       color: 'text-blue-500',
     },
     {
-      category: 'Backend',
-      items: ['Python 3.10', 'uAgents Framework', 'LangChain Agent', 'REST APIs', 'Async/Await', 'aiohttp', 'Pydantic', 'Azure Container Apps'],
+      category: 'Fetch.ai',
+      items: ['uAgents', 'Agent Chat Protocol', 'Payment Protocol', 'Agentverse', 'mailbox'],
       icon: Zap,
       color: 'text-yellow-500',
     },
     {
-      category: 'Blockchain & Payments',
-      items: ['Stripe Checkout', 'FET on Fetch Network', 'ASI-1'],
+      category: 'Payments',
+      items: ['Stripe Checkout', 'Payment Protocol embedded_page', 'FET on Fetch Network'],
       icon: Coins,
       color: 'text-orange-500',
     },
     {
       category: 'Database',
-      items: ['Supabase', 'PostgreSQL', 'Row Level Security', 'Real-time Subscriptions', 'JWT Auth'],
+      items: ['Supabase', 'PostgreSQL', 'Storage images bucket', 'JWT Auth'],
       icon: Database,
       color: 'text-green-500',
     },
     {
-      category: 'AI & Services',
-      items: ['ASI-1', 'LangChain Agent', 'Agent-to-Agent Communication', 'Image Generation Agent', 'LinkedIn API'],
+      category: 'ASI:One',
+      items: ['ASI:One only', 'ChatOpenAI → api.asi1.ai/v1', 'Image generate b64_json', 'web_search high'],
       icon: Globe,
       color: 'text-purple-500',
     },
@@ -48,18 +50,21 @@ export default function TechStackPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 sm:py-12 md:py-20 max-w-7xl">
+    <div className="relative min-h-screen">
+      <div className="lab-mesh pointer-events-none absolute inset-0" />
+      <LandingHeader />
+      <div className="relative z-10 container mx-auto px-4 py-8 sm:py-12 md:py-20 max-w-7xl pt-28">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4">
-            Technology Stack
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3] mb-3">Powered by ASI:One</p>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tight mb-4">
+            Tech
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto px-4">
-            Built with modern technologies for scalability, security, and performance
+            Next.js 16 · uAgents · ASI:One only · Stripe Payment Protocol · Supabase
           </p>
         </motion.div>
 
@@ -112,19 +117,22 @@ export default function TechStackPage() {
                 chart={`graph TD
     A[User Browser] -->|HTTPS| B[Next.js Frontend]
     B -->|REST API| C[Python uAgents Backend]
+    U[User on ASI:One] -->|Chat Protocol + Cards| C
     C -->|SQL| D[(Supabase Database)]
     C -->|OAuth| E[LinkedIn API]
-    C -->|AI API| F[ASI-1]
-    C -->|Stripe / FET| G[Fetch Network]
-    
+    C -->|AI API| F[ASI:One]
+    C -->|FET Payments| G[Fetch Network]
+    C -->|Stripe Pack| S[Stripe Checkout]
+
     style A fill:#3b82f6,stroke:#2563eb,color:#fff
     style B fill:#3b82f6,stroke:#2563eb,color:#fff
     style C fill:#f59e0b,stroke:#d97706,color:#fff
     style D fill:#10b981,stroke:#059669,color:#fff
     style E fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style F fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style F fill:#5F43F1,stroke:#3D8BD3,color:#fff
     style G fill:#f97316,stroke:#ea580c,color:#fff
-    style H fill:#f97316,stroke:#ea580c,color:#fff`}
+    style S fill:#f97316,stroke:#ea580c,color:#fff
+    style U fill:#3b82f6,stroke:#2563eb,color:#fff`}
                 id="architecture-diagram"
               />
             </CardContent>
@@ -142,24 +150,30 @@ export default function TechStackPage() {
             <CardHeader className="p-4 sm:p-6">
               <CardTitle className="text-xl sm:text-2xl">Payment Flow</CardTitle>
               <CardDescription className="text-sm sm:text-base">
-                How users pay Stripe or FET for services
+                Stripe pack on web - FET Payment Protocol in agent chat
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 sm:p-6">
               <MermaidDiagram
                 chart={`sequenceDiagram
-    User->>Frontend: Click Service
-    Frontend->>Frontend: Show Payment Modal
-    User->>Frontend: Approve Payment
-    Frontend->>Stripe / FET: Create Transaction
-    Stripe / FET->>Backend: Submit Transaction
-    Backend->>Stripe / FET: Send Transaction
-    Stripe / FET->>Blockchain: Broadcast to BSV
-    Blockchain-->>Stripe / FET: Transaction ID
-    Stripe / FET-->>Backend: Ticket ID
-    Backend-->>Frontend: Payment Status
-    Backend->>Database: Save Payment Record
-    Frontend->>Frontend: Execute Service`}
+    participant U as User
+    participant F as Frontend / Chat UI
+    participant B as uAgent Backend
+    participant P as Stripe / Fetch Wallet
+    Note over U,P: Web - Stripe pack $4.99 for 10 uses
+    U->>F: Choose a service
+    F->>P: Open Stripe Checkout
+    U->>P: Pay with card
+    P-->>B: Payment confirmed
+    B->>B: Verify and credit 10 uses
+    B-->>F: Uses unlocked
+    F->>B: Run service (1 use deducted)
+    Note over U,B: Agent chat - FET Payment Protocol
+    U->>B: Request a service on ASI:One
+    B-->>U: Interactive card with FET payment request
+    U->>B: Send FET from Fetch Wallet
+    B->>B: Verify transaction (1 use)
+    B-->>U: Draft, graphic, publish or schedule in chat`}
                 id="payment-flow-diagram"
               />
             </CardContent>
@@ -187,20 +201,20 @@ export default function TechStackPage() {
     Check -->|Yes| Execute[Execute Service]
     Check -->|No| Pay[Request Payment]
     Pay --> Execute
-    
+
     Execute --> Type{Service Type}
-    Type -->|AI Post| AI[Generate with ASI-1]
+    Type -->|AI Post| AI[Generate with ASI:One]
     Type -->|LinkedIn| LI[Post to LinkedIn]
     Type -->|Schedule| Sched[Save Schedule]
     Type -->|Templates| Temp[Save Template]
-    
+
     AI --> Save[(Save to Database)]
     LI --> Save
     Sched --> Save
     Temp --> Save
-    
+
     Save --> Done([Service Complete])
-    
+
     style Start fill:#3b82f6,stroke:#2563eb,color:#fff
     style Execute fill:#10b981,stroke:#059669,color:#fff
     style Save fill:#8b5cf6,stroke:#7c3aed,color:#fff
@@ -234,10 +248,10 @@ export default function TechStackPage() {
     API --> AI[AI Service]
     API --> Scheduler[Scheduler Service]
     API --> Analytics[Analytics Service]
-    
-    Payment --> Pay[Payment Service]
+
+    Payment --> Stripe[Stripe API]
     LinkedIn --> LI_API[LinkedIn API]
-    AI --> ASI1[ASI-1]
+    AI --> ASI1[ASI:One]
     Scheduler --> Cron[Background Jobs]
     Auth --> DB[(Supabase)]
     Payment --> DB
@@ -245,10 +259,10 @@ export default function TechStackPage() {
     AI --> DB
     Scheduler --> DB
     Analytics --> DB
-    
+
     style API fill:#f59e0b,stroke:#d97706,color:#fff
     style DB fill:#10b981,stroke:#059669,color:#fff
-    style Pay fill:#f97316,stroke:#ea580c,color:#fff
+    style Stripe fill:#f97316,stroke:#ea580c,color:#fff
     style LI_API fill:#8b5cf6,stroke:#7c3aed,color:#fff
     style ASI1 fill:#5F43F1,stroke:#3D8BD3,color:#fff`}
                 id="backend-services-diagram"
@@ -281,14 +295,14 @@ export default function TechStackPage() {
     DB --> Schedules[scheduled_posts table]
     DB --> LinkedIn[linkedin_connections table]
     DB --> Templates[templates table]
-    
+
     Users --> RLS[Row Level Security]
     Payments --> RLS
     Posts --> RLS
     Schedules --> RLS
     LinkedIn --> RLS
     Templates --> RLS
-    
+
     style DB fill:#10b981,stroke:#059669,color:#fff
     style RLS fill:#ef4444,stroke:#dc2626,color:#fff`}
                 id="data-storage-diagram"
@@ -313,57 +327,57 @@ export default function TechStackPage() {
             <CardContent className="p-4 sm:p-6">
               <MermaidDiagram
                 chart={`graph TB
-    subgraph "FET/Stripe Payment Flow"
-        User[User] -->|Stripe or FET| Payment[Payment Service]
-        Payment -->|Verify| PayAPI[Stripe / FET]
-        PayAPI -->|Chain| FetchNet[Fetch Network]
+    subgraph "Payment Entry Points"
+        User[User] -->|Web Dashboard| Web[Stripe Checkout $4.99 / 10 uses]
+        User -->|Agent Chat| Chat[ASI:One FET Payment Protocol]
+        Web --> Payment[Payment Service]
+        Chat --> Payment
+        Payment -->|Verify| PayAPI[Stripe API + Fetch Ledger]
     end
-    
-    subgraph "Services Using FET/Stripe"
+
+    subgraph "Services Using Payments"
         Payment -->|Payment Verified| AI[AI Post Generation]
         Payment -->|Payment Verified| LinkedIn[LinkedIn Posting]
         Payment -->|Payment Verified| Schedule[Post Scheduling]
         Payment -->|Payment Verified| URL[URL to Post]
         Payment -->|Payment Verified| Template[Template Management]
-        Payment -->|Payment Verified| Dashboard[Dashboard Access]
     end
-    
+
     subgraph "Technologies"
-        AI -->|Uses| LangChain[LangChain Agent]
-        AI -->|Uses| ASI1[ASI-1]
+        AI -->|Uses| ASI1[ASI:One]
         LinkedIn -->|Uses| LinkedIn_API[LinkedIn API]
-        Schedule -->|Uses| Cron[Cron Jobs]
-        URL -->|Uses| LangChain
+        Schedule -->|Uses| Cron[Background Scheduler]
+        URL -->|Uses| ASI1
         Template -->|Uses| Supabase[(Supabase DB)]
-        Dashboard -->|Uses| Supabase
     end
-    
-    subgraph "Backend Infrastructure"
-        LangChain -->|Deployed on| Azure[Azure Container Apps]
-        LinkedIn_API -->|Deployed on| Azure
-        Cron -->|Deployed on| Azure
-        Supabase -->|Hosted on| Azure
+
+    subgraph "Deployment"
+        PayAPI -->|Runs on| Railway[Railway]
+        ASI1 -->|Runs on| Railway
+        Cron -->|Runs on| Railway
+        Supabase -->|Hosted on| SupaCloud[Supabase Cloud]
     end
-    
+
     style User fill:#3b82f6,stroke:#2563eb,color:#fff
+    style Web fill:#3b82f6,stroke:#2563eb,color:#fff
+    style Chat fill:#3b82f6,stroke:#2563eb,color:#fff
     style Payment fill:#f97316,stroke:#ea580c,color:#fff
     style PayAPI fill:#f97316,stroke:#ea580c,color:#fff
-    style FetchNet fill:#f97316,stroke:#ea580c,color:#fff
     style AI fill:#8b5cf6,stroke:#7c3aed,color:#fff
     style LinkedIn fill:#8b5cf6,stroke:#7c3aed,color:#fff
     style Schedule fill:#8b5cf6,stroke:#7c3aed,color:#fff
     style URL fill:#8b5cf6,stroke:#7c3aed,color:#fff
     style Template fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style Dashboard fill:#8b5cf6,stroke:#7c3aed,color:#fff
-    style LangChain fill:#10b981,stroke:#059669,color:#fff
     style ASI1 fill:#5F43F1,stroke:#3D8BD3,color:#fff
-    style Azure fill:#0078d4,stroke:#005a9e,color:#fff
+    style Railway fill:#f59e0b,stroke:#d97706,color:#fff
+    style SupaCloud fill:#10b981,stroke:#059669,color:#fff
     style Supabase fill:#10b981,stroke:#059669,color:#fff`}
                 id="payment-usage-diagram"
               />
             </CardContent>
           </Card>
         </motion.div>
+        <LandingFooter />
       </div>
     </div>
   )

@@ -23,8 +23,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   // Show loading during initial auth check
   if (!mounted || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="relative flex min-h-screen items-center justify-center">
+        <div className="lab-mesh pointer-events-none absolute inset-0" />
+        <Loader2 className="relative z-10 h-8 w-8 animate-spin text-[#5F43F1]" />
       </div>
     )
   }

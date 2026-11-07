@@ -8,8 +8,8 @@ import { Sparkles, Calendar, BarChart3, Zap, Link2, PenSquare, Bot, Globe, FileT
 const features = [
   {
     icon: Sparkles,
-    title: 'ASI-1 Post Generation',
-    description: 'Create engaging LinkedIn posts in seconds. ASI-1 is the only model doing the thinking.',
+    title: 'ASI:One Post Generation',
+    description: 'Create engaging LinkedIn posts in seconds. ASI:One is the only model doing the thinking.',
   },
   {
     icon: Calendar,

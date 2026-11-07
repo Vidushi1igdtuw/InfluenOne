@@ -4,21 +4,15 @@
 
 @layer base {
   :root {
-    --font-sans: var(--font-quicksand);
-  }
-}
-
-@layer base {
-  :root {
-    --radius: 0.625rem;
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --font-sans: var(--font-space);
+    --font-mono: var(--font-plex);
+    --radius: 0.875rem;
+    --background: 228 45% 97%;
+    --foreground: 233 40% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 233 40% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    /* Fetch.ai Innovation Lab / Stranger Builds
-       hackathon #5F43F1, lab #3D8BD3 */
+    --popover-foreground: 233 40% 8%;
     --primary: 248 86% 60%;
     --primary-foreground: 0 0% 100%;
     --secondary: 205 64% 53%;
@@ -26,58 +20,50 @@
     --tertiary: 248 86% 60%;
     --tertiary-foreground: 0 0% 100%;
     --hover-bg: 248 100% 96%;
-    --muted: 230 40% 96%;
-    --muted-foreground: 230 15% 40%;
+    --muted: 228 30% 93%;
+    --muted-foreground: 230 15% 38%;
     --accent: 205 80% 95%;
     --accent-foreground: 248 86% 40%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 230 20% 90%;
-    --input: 230 20% 90%;
+    --border: 230 22% 88%;
+    --input: 230 22% 88%;
     --ring: 248 86% 60%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --chart-1: 248 86% 60%;
+    --chart-2: 205 64% 53%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --code-color-1: 262 83% 58%;
-    --code-color-2: 0 72% 51%;
-    --accent-purple: 262 83% 65%;
-    --accent-blue: 217 91% 60%;
   }
 
   .dark {
-    --background: 233 40% 6%;
-    --foreground: 0 0% 98%;
-    --card: 233 30% 9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 233 30% 9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 248 86% 68%;
+    --background: 233 48% 4%;
+    --foreground: 210 40% 96%;
+    --card: 233 38% 7%;
+    --card-foreground: 210 40% 96%;
+    --popover: 233 38% 8%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 248 86% 64%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 205 64% 58%;
+    --secondary: 205 64% 56%;
     --secondary-foreground: 0 0% 100%;
     --tertiary: 248 86% 70%;
     --tertiary-foreground: 0 0% 100%;
-    --hover-bg: 248 40% 16%;
-    --muted: 233 20% 16%;
-    --muted-foreground: 230 15% 70%;
-    --accent: 248 40% 16%;
-    --accent-foreground: 248 86% 78%;
+    --hover-bg: 248 40% 14%;
+    --muted: 233 28% 12%;
+    --muted-foreground: 225 14% 68%;
+    --accent: 248 36% 14%;
+    --accent-foreground: 248 86% 82%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 233 20% 18%;
-    --input: 233 20% 18%;
+    --border: 233 24% 16%;
+    --input: 233 24% 16%;
     --ring: 248 86% 68%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
+    --chart-1: 248 86% 64%;
+    --chart-2: 205 64% 56%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --code-color-1: 262 83% 68%;
-    --code-color-2: 0 72% 61%;
-    --accent-purple: 262 83% 70%;
-    --accent-blue: 217 91% 65%;
   }
 }
 
@@ -85,47 +71,57 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply scroll-smooth;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  code, kbd, pre {
+    font-family: var(--font-mono), ui-monospace, monospace;
   }
 }
 
-/* SVG Animation Styles */
+.lab-mesh {
+  background:
+    radial-gradient(900px 480px at 12% -10%, hsl(248 86% 60% / 0.28), transparent 55%),
+    radial-gradient(800px 520px at 92% 8%, hsl(205 64% 53% / 0.22), transparent 50%),
+    radial-gradient(700px 500px at 50% 110%, hsl(248 86% 40% / 0.16), transparent 55%);
+}
+
+.lab-grid {
+  background-image:
+    linear-gradient(hsl(210 40% 96% / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(210 40% 96% / 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+}
+
+.lab-grain {
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.lab-glass {
+  @apply border border-border bg-card/70 shadow-[0_0_0_1px_hsl(248_86%_60%_/_0.08),0_20px_50px_-24px_hsl(248_86%_40%_/_0.55)] backdrop-blur-xl;
+}
+
+.lab-glow {
+  box-shadow: 0 0 0 1px hsl(248 86% 60% / 0.35), 0 10px 40px -10px hsl(248 86% 60% / 0.55);
+}
+
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-rotate {
-  animation: rotate 20s linear infinite;
+  animation: float 7s ease-in-out infinite;
 }
 
 .animate-pulse-glow {

@@ -406,6 +406,8 @@ class PaymentConfigRESTResponse(Model):
     success: bool
     stripe_amount_usd: str = "4.99"
     stripe_ready: bool = False
+    pack_uses: int = 10
+    website_stripe_only: bool = True
     fet_amount: str = "5"
     fet_address: str = ""
     fet_network: str = "testnet"
@@ -424,11 +426,15 @@ class PaymentStatusRESTResponse(Model):
     payment_date: Optional[str] = None
     tx_hash: Optional[str] = None
     amount: Optional[str] = None
+    credits_remaining: int = 0
+    pack_size: int = 10
     error: Optional[str] = None
 
 class DashboardAccessRESTResponse(Model):
     has_access: bool
     has_paid: bool
+    credits_remaining: int = 0
+    pack_size: int = 10
     message: Optional[str] = None
     error: Optional[str] = None
 

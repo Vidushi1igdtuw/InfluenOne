@@ -87,7 +87,7 @@ export default function AnalyticsPage() {
                   Analytics & Insights
                 </CardTitle>
                 <CardDescription className="text-xs sm:text-sm mt-1">
-                  Track your performance and FET/Stripe spending
+                  Track your performance and Stripe pack usage
                 </CardDescription>
               </div>
               <div className="flex gap-2">

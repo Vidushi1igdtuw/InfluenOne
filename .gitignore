@@ -10,3 +10,5 @@
 *.pyc
 *.log
 .vercel
+
+.fetch-coder/checkpoints/

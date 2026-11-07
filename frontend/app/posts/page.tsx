@@ -405,7 +405,7 @@ export default function PostsPage() {
           service="linkedin_post"
           serviceName="Tip"
           onSuccess={async () => {
-            toast.success('Tip sent with Stripe or FET')
+            toast.success('Tip sent with Stripe')
             setShowTipPayment(false)
             setTippingPost(null)
           }}

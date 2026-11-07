@@ -40,11 +40,11 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-xl font-semibold mb-3">2. Payments</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  InfluenOne accepts card payments through Stripe and FET transfers on Fetch Network. By using the Service, you acknowledge that:
+                  Website packs are paid with Stripe only. ASI:One chat is 1 use per card payment. By using the Service, you acknowledge that:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground mt-3 ml-4">
                   <li>Stripe charges follow Stripe&apos;s terms and can be refunded through Stripe</li>
-                  <li>FET transfers are on-chain and typically irreversible</li>
+                  <li>A website pack grants 10 uses of full access; ASI:One grants 1 use per payment</li>
                   <li>We never ask you to paste a private key</li>
                 </ul>
               </section>
@@ -70,7 +70,7 @@ export default function TermsPage() {
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground mt-3 ml-4">
                   <li><strong>LinkedIn API:</strong> Subject to LinkedIn's Terms of Service</li>
-                  <li><strong>ASI-1:</strong> Subject to Fetch.ai / ASI:One terms</li>
+                  <li><strong>ASI:One:</strong> Subject to Fetch.ai / ASI:One terms</li>
                   <li><strong>Supabase:</strong> Subject to Supabase Terms of Service</li>
                   <li><strong>Stripe:</strong> Subject to Stripe Terms of Service</li>
                   <li><strong>Fetch Network (FET):</strong> On-chain transfers you initiate</li>
@@ -83,12 +83,12 @@ export default function TermsPage() {
               <section>
                 <h2 className="text-xl font-semibold mb-3">5. Payment Terms</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Services are paid with Stripe (card) or FET:
+                  Website packs are Stripe only:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground mt-3 ml-4">
-                  <li>Card: set by STRIPE_AMOUNT_USD on the server</li>
-                  <li>FET: set by FET_AMOUNT on the server</li>
-                  <li>Post Ideas: FREE</li>
+                  <li>Website: one Stripe payment unlocks 10 uses of generate, URL-to-post, schedule, and post</li>
+                  <li>ASI:One chat: one Stripe payment unlocks 1 use</li>
+                  <li>Card amount is set by STRIPE_AMOUNT_USD on the server</li>
                 </ul>
                 <p className="text-muted-foreground leading-relaxed mt-3">
                   Payments are non-refundable. Once a transaction is confirmed on the blockchain, it cannot be reversed.
@@ -110,7 +110,7 @@ export default function TermsPage() {
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground mt-3 ml-4">
                   <li>User account information (email, password)</li>
                   <li>LinkedIn profile data (with your consent)</li>
-                  <li>Payment records (Stripe session id or FET tx hash)</li>
+                  <li>Payment records (Stripe session id)</li>
                   <li>Generated content and posts</li>
                   <li>Payment transaction records</li>
                 </ul>

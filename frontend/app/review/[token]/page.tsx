@@ -147,7 +147,7 @@ export default function ReviewPage() {
         toast.error(data.error)
       } else {
         if (data.payment_required && actionType === 'approve') {
-          toast.success('Post approved. The creator pays with Stripe or FET to publish.')
+          toast.success('Post approved. The creator publishes with a Stripe pack.')
         } else {
           toast.success(data.message || `${actionType === 'approve' ? 'Approved' : 'Rejected'} successfully!`)
         }

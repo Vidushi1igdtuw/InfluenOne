@@ -2,7 +2,7 @@
   "name": "influenone-fe",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "InfluenOne — ASI:One ghostwriter for LinkedIn influencers. Stripe or FET.",
+  "description": "InfluenOne — LinkedIn ghostwriter powered by ASI:One. Fetch.ai Innovation Lab.",
   "private": true,
   "scripts": {
     "dev": "next dev -p 5500",

@@ -11,9 +11,13 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
+import Link from 'next/link'
 import api from '@/lib/api'
 import { Sparkles, CheckCircle2, Send, Trash2, Image as ImageIcon, Edit2, Save, X, RefreshCw, Bell, MessageSquare, User } from 'lucide-react'
 import { PaymentModal } from '@/components/web3/PaymentModal'
+import { PoweredByAsi } from '@/components/brand/powered-by'
+import { saveGalleryItem } from '@/lib/gallery'
+import { hasVoiceKit, loadVoiceKit, voiceKitPrefix } from '@/lib/voice-kit'
 
 interface TeamApproval {
   approved: boolean
@@ -56,7 +60,7 @@ const languages = [
 export default function AIGeneratorPage() {
   const { connected } = useLinkedIn()
   const [topic, setTopic] = useState('')
-  const [includeImage, setIncludeImage] = useState(false)
+  const [includeImage, setIncludeImage] = useState(true)
   const [language, setLanguage] = useState('en')
   const [loading, setLoading] = useState(false)
   const [posting, setPosting] = useState(false)
@@ -197,7 +201,7 @@ export default function AIGeneratorPage() {
     setGeneratedPost(null)
     try {
       const payload: any = { 
-        topic, 
+        topic: `${voiceKitPrefix(loadVoiceKit())}${topic}`, 
         includeImage, 
         language: language || 'en' 
       }
@@ -248,6 +252,9 @@ export default function AIGeneratorPage() {
       setGeneratedPost(postData)
       setEditedText(postData.text)
       setIsEditing(false)
+      if (imageUrl) {
+        saveGalleryItem({ url: imageUrl, topic })
+      }
       
       // Log content for debugging
       if (!contentText) {
@@ -267,6 +274,9 @@ export default function AIGeneratorPage() {
         }
       } else {
         pushLog('AI post generated successfully! Please review and schedule or post.', 'success')
+        if (includeImage && !imageUrl) {
+          pushLog(data.image_error || 'Post text is ready, but the graphic failed. Use Regenerate Image.', 'warning')
+        }
         toast.success('Post generated! Please review before posting or scheduling.')
       }
     } catch (e: any) {
@@ -383,7 +393,7 @@ export default function AIGeneratorPage() {
     setLoading(true)
     try {
       const payload: any = { 
-        topic: generatedPost.topic, 
+        topic: `${voiceKitPrefix(loadVoiceKit())}${generatedPost.topic}`, 
         includeImage: false, // Don't regenerate image, only content
         language: language || 'en',
         regenerate: true // Flag to indicate regeneration (no payment)
@@ -459,8 +469,14 @@ export default function AIGeneratorPage() {
       }
       setGeneratedPost(postData)
       
-      pushLog('Image regenerated successfully!', 'success')
-      toast.success('Image regenerated!')
+      if (!imageUrl) {
+        pushLog(data.image_error || 'Image generation returned no file', 'error')
+        toast.error(data.image_error || 'Image did not generate. Try again.')
+      } else {
+        saveGalleryItem({ url: imageUrl, topic: generatedPost.topic })
+        pushLog('Image regenerated successfully!', 'success')
+        toast.success('Image regenerated!')
+      }
     } catch (e: any) {
       const errorMsg = e?.response?.data?.message || e.message || 'Image regeneration failed'
       pushLog(`Image regeneration failed: ${errorMsg}`, 'error')
@@ -564,12 +580,16 @@ export default function AIGeneratorPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="border-2">
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-xl sm:text-2xl font-bold">AI Generator</CardTitle>
+        <Card className="lab-glass border-border">
+          <CardHeader className="p-4 sm:p-6 space-y-3">
+            <PoweredByAsi />
+            <CardTitle className="text-xl sm:text-3xl font-semibold tracking-tight">Studio</CardTitle>
             <CardDescription className="text-sm sm:text-base">
-              Let AI draft high-impact posts tailored to your topics.
+              ASI:One writes the post and draws the graphic. Set a voice kit first for your tone.
             </CardDescription>
+            <Link href="/voice" className="text-xs text-[#3D8BD3] hover:underline">
+              {hasVoiceKit(loadVoiceKit()) ? 'Voice kit on · edit' : 'Add a voice kit'}
+            </Link>
           </CardHeader>
         </Card>
       </motion.div>
@@ -876,7 +896,7 @@ export default function AIGeneratorPage() {
                           alt="Generated post image" 
                           className="w-full h-auto max-w-full object-contain"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none'
+                            e.currentTarget.alt = 'Image failed to load'
                           }}
                         />
                       </div>

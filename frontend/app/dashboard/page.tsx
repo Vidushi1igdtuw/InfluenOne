@@ -142,12 +142,12 @@ export default function DashboardPage() {
   }
 
   const quickActions = [
-    { href: '/create', icon: PenSquare, label: 'Create Post', description: 'Share updates', color: 'from-blue-500 to-blue-600' },
-    { href: '/ai', icon: Bot, label: 'AI Generator', description: 'Generate content', color: 'from-purple-500 to-purple-600' },
-    { href: '/schedule', icon: Calendar, label: 'Scheduler', description: 'Schedule posts', color: 'from-green-500 to-green-600' },
-    { href: '/url-to-post', icon: LinkIcon, label: 'URL to Post', description: 'Convert URLs to posts', color: 'from-orange-500 to-orange-600' },
-    { href: '/ideas', icon: Sparkles, label: 'Post Ideas', description: 'Generate ideas', color: 'from-pink-500 to-pink-600' },
-    { href: '/templates', icon: FileText, label: 'Templates', description: 'Save & reuse posts', color: 'from-indigo-500 to-indigo-600' },
+        { href: '/ai', icon: Bot, label: 'Studio', description: 'ASI:One generate + image', color: 'from-[#5F43F1] to-[#3D8BD3]' },
+    { href: '/url-to-post', icon: LinkIcon, label: 'URL → post', description: 'Scrape then write', color: 'from-[#3D8BD3] to-[#5F43F1]' },
+    { href: '/voice', icon: Sparkles, label: 'Voice kit', description: 'Lock your tone', color: 'from-[#5F43F1] to-[#2a1a7a]' },
+    { href: '/gallery', icon: FileText, label: 'Gallery', description: 'ASI:One graphics', color: 'from-[#3D8BD3] to-[#0b2a44]' },
+    { href: '/agent', icon: Calendar, label: 'Agentverse', description: 'Chat on ASI:One', color: 'from-[#5F43F1] to-[#3D8BD3]' },
+    { href: '/schedule', icon: PenSquare, label: 'Schedule', description: 'Set it and post', color: 'from-[#3D8BD3] to-[#5F43F1]' },
   ]
 
   const completedTasks = tasks.filter(t => t.completed).length
@@ -165,25 +165,26 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="border-2 bg-gradient-to-br from-primary/10 via-primary/5 to-background shadow-lg">
+        <Card className="lab-glass border-border">
           <CardHeader className="p-6 md:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex-1 space-y-3">
+                <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-[#3D8BD3]">Command center · Powered by ASI:One</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#5F43F1] to-[#3D8BD3] flex items-center justify-center lab-glow">
                     <Zap className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                      Welcome Back! 👋
+                    <CardTitle className="text-3xl sm:text-4xl font-semibold tracking-tight">
+                      Intent to action
                     </CardTitle>
                     <CardDescription className="text-base md:text-lg mt-1">
-                      {formatIST(new Date())} IST
+                      {formatIST(new Date())} IST · ASI:One only
                     </CardDescription>
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Manage your content creation workflow from one place. Create, schedule, and analyze your LinkedIn posts effortlessly.
+                  Generate with ASI:One, draw the graphic, pay, and publish.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">

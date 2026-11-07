@@ -5,7 +5,7 @@
 
 Next.js app in Fetch.ai Innovation Lab colours (`#5F43F1` / `#3D8BD3`).
 
-Same flow: generate with ASI-1 → pay with Stripe or FET → post.
+Same flow: generate with ASI:One → pay with Stripe or FET → post.
 
 ```bash
 cp .env.example .env.local

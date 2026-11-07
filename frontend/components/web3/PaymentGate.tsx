@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { usePayment } from '@/contexts/PaymentContext'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { PaymentModal } from './PaymentModal'
 import { Loader2, Lock } from 'lucide-react'
 import { toast } from 'sonner'
+import { usePayment } from '@/contexts/PaymentContext'
+import { LabAtmosphere } from '@/components/brand/atmosphere'
+import { BrandMark } from '@/components/brand/mark'
+import { PoweredByAsi } from '@/components/brand/powered-by'
+import { PaymentModal } from './PaymentModal'
 
 export function PaymentGate({ children }: { children: React.ReactNode }) {
-  const { hasPaid, loading, refreshPaymentStatus } = usePayment()
+  const { hasPaid, loading, refreshPaymentStatus, packSize } = usePayment()
   const router = useRouter()
   const [checkingPayment, setCheckingPayment] = useState(true)
 
@@ -27,29 +29,35 @@ export function PaymentGate({ children }: { children: React.ReactNode }) {
 
   const handlePaymentSuccess = async () => {
     await refreshPaymentStatus()
-    toast.success('Dashboard access granted')
+    toast.success('Creator pack unlocked')
   }
 
   if (loading || checkingPayment) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="relative flex min-h-screen items-center justify-center">
+        <LabAtmosphere />
+        <Loader2 className="relative z-10 h-8 w-8 animate-spin text-[#5F43F1]" />
       </div>
     )
   }
 
   if (!hasPaid) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <Card className="max-w-md w-full border-2">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Lock className="h-8 w-8 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">Dashboard Access Required</CardTitle>
-            <CardDescription className="mt-2">Pay with Stripe or FET to unlock the dashboard</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="relative flex min-h-screen items-center justify-center p-4">
+        <LabAtmosphere />
+        <div className="lab-glass relative z-10 w-full max-w-md rounded-3xl p-8 text-center">
+          <BrandMark className="mb-6 justify-center" />
+          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-[#5F43F1]/20">
+            <Lock className="h-7 w-7 text-primary" />
+          </div>
+          <h1 className="text-2xl font-semibold">Unlock the studio</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Stripe only — {packSize} uses of ASI:One generate, image, and publish.
+          </p>
+          <div className="mt-4 flex justify-center">
+            <PoweredByAsi />
+          </div>
+          <div className="mt-6 text-left">
             <PaymentModal
               service="dashboard_access"
               serviceName="Dashboard Access"
@@ -60,8 +68,8 @@ export function PaymentGate({ children }: { children: React.ReactNode }) {
                 return {}
               }}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     )
   }

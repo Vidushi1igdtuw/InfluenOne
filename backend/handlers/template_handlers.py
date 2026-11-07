@@ -26,7 +26,7 @@ def register_template_handlers(agent, payment_service, supabase_admin):
             
             payment_status = await payment_service.check_user_payment_status(req.user_id, "templates")
             if not payment_status.get("has_paid"):
-                return {"message": "", "template_id": None, "error": "Payment required. Please pay Stripe or FET to use this service."}
+                return {"message": "", "template_id": None, "error": "Payment required. Buy a Stripe pack (10 uses) first."}
             
             if not supabase_admin:
                 return {"message": "", "template_id": None, "error": "Database not configured"}

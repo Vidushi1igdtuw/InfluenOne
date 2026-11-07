@@ -77,9 +77,10 @@ scheduler_service = SchedulerService(supabase_client, supabase_admin, ai_service
 AGENT_NAME = "InfluenOneAgent"
 agent = Agent(
     name=AGENT_NAME,
+    readme_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), "README.md"),
     mailbox=True,
-    port=int(os.getenv("PORT", "8023")),
-    seed=os.getenv("AGENT_SEED", "0000000000000000000000000000000000000000000000000000000000000000--"),
+    port=int(os.getenv("PORT")),
+    seed=os.getenv("AGENT_SEED"), 
 )
 
 # Monkey-patch uagents ASGI handler

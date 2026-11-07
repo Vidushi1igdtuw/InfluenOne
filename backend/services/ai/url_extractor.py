@@ -1,4 +1,4 @@
-"""URL → LinkedIn post via ASI-1."""
+"""URL → LinkedIn post via ASI:One."""
 
 from typing import Dict, Optional
 from uagents import Context

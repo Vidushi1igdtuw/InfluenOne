@@ -98,7 +98,7 @@ def register_ai_handlers(agent, ai_service, payment_service=None, supabase_admin
     
     @agent.on_rest_post("/api/ai/generate-image", GenerateImageRESTRequest, GenerateImageRESTResponse)
     async def handle_generate_image_rest(ctx: Context, req: GenerateImageRESTRequest) -> GenerateImageRESTResponse:
-        """Generate image via REST - returns URL from ASI-1"""
+        """Generate image via REST - returns URL from ASI:One"""
         try:
             image_prompt = await ai_service.generate_image_prompt(req.topic)
             image_url = await ai_service.generate_image(image_prompt, ctx=ctx)

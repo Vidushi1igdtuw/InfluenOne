@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Quicksand, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -8,75 +8,73 @@ import { SlackProvider } from "@/contexts/SlackContext";
 import { PaymentProvider } from "@/contexts/PaymentContext";
 import { Toaster } from "@/components/ui/sonner";
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const space = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plex = IBM_Plex_Mono({
+  variable: "--font-plex",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "InfluenOne — ASI:One for LinkedIn influencers | Fetch.ai Innovation Lab",
-  description: "ASI:One ghostwriter for LinkedIn influencers. Generate, schedule, and post. Pay with Stripe or FET. Built for Stranger Builds.",
-  keywords: ["ASI:One", "ASI-1", "influencer", "LinkedIn", "Fetch.ai", "Innovation Lab", "Stranger Builds", "uAgents", "Stripe", "FET"],
+  title: "InfluenOne — Powered by ASI:One | Fetch.ai Innovation Lab",
+  description:
+    "LinkedIn ghostwriter agent powered by ASI:One. Intent to action: generate, design, pay, and publish. Built for Stranger Builds 1.",
+  keywords: [
+    "ASI:One",
+    "ASI:One",
+    "InfluenOne",
+    "Fetch.ai",
+    "Innovation Lab",
+    "Stranger Builds",
+    "uAgents",
+    "Agentverse",
+    "LinkedIn",
+  ],
   authors: [{ name: "InfluenOne" }],
   creator: "InfluenOne",
   publisher: "InfluenOne",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://influenone.app'),
-  alternates: {
-    canonical: '/',
-  },
+  formatDetection: { email: false, address: false, telephone: false },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://influenone.app"),
+  alternates: { canonical: "/" },
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: '/',
-    title: 'InfluenOne — ASI:One for LinkedIn influencers | Fetch.ai Innovation Lab',
-    description: 'ASI:One ghostwriter for LinkedIn influencers. Generate, schedule, and post. Pay with Stripe or FET. Built for Stranger Builds.',
-    siteName: 'InfluenOne',
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    title: "InfluenOne — Powered by ASI:One",
+    description:
+      "LinkedIn ghostwriter agent powered by ASI:One. Intent to action for Fetch.ai Innovation Lab Stranger Builds.",
+    siteName: "InfluenOne",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'InfluenOne — ASI:One for LinkedIn influencers | Fetch.ai Innovation Lab',
-    description: 'ASI:One ghostwriter for LinkedIn influencers. Generate, schedule, and post. Pay with Stripe or FET. Built for Stranger Builds.',
-    creator: '@influenone',
+    card: "summary_large_image",
+    title: "InfluenOne — Powered by ASI:One",
+    description:
+      "LinkedIn ghostwriter agent powered by ASI:One. Intent to action for Fetch.ai Innovation Lab Stranger Builds.",
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
   },
   icons: {
-    icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
-    shortcut: '/icon.svg',
-    apple: '/icon.svg',
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
-  manifest: '/site.webmanifest',
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#5F43F1' },
-    { media: '(prefers-color-scheme: dark)', color: '#5F43F1' },
+    { media: "(prefers-color-scheme: light)", color: "#5F43F1" },
+    { media: "(prefers-color-scheme: dark)", color: "#060814" },
   ],
 };
 
@@ -87,11 +85,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${quicksand.variable} ${geistMono.variable} antialiased font-sans`}>
+      <body className={`${space.variable} ${plex.variable} antialiased font-sans`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <AuthProvider>
@@ -109,4 +107,3 @@ export default function RootLayout({
     </html>
   );
 }
-

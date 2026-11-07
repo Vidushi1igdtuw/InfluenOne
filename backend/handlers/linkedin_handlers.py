@@ -174,11 +174,10 @@ def register_linkedin_handlers(agent, linkedin_service, ai_service, payment_serv
             if payment_service:
                 user_id = req.user_id or await _get_user_id_from_token(ctx)
                 if user_id:
-                    payment_status = await payment_service.check_user_payment_status(user_id, "linkedin_post")
-                    if not payment_status.get("has_paid"):
+                    if not await payment_service.has_publish_access(user_id):
                         return LinkedInPostRESTResponse(
                             message="",
-                            error="Payment required. Please make a FET/Stripe payment to post on LinkedIn."
+                            error="Payment required. Buy a Stripe pack (10 uses) first."
                         )
             
             image_url = req.imageUrl if hasattr(req, 'imageUrl') else None
@@ -313,9 +312,8 @@ def register_linkedin_handlers(agent, linkedin_service, ai_service, payment_serv
             if not req.user_id:
                 return {"message": "", "error": "Authentication required"}
             
-            payment_status = await payment_service.check_user_payment_status(req.user_id, "linkedin_post")
-            if not payment_status.get("has_paid"):
-                return {"message": "", "error": "Payment required. Please pay Stripe or FET to use this service."}
+            if not await payment_service.has_publish_access(req.user_id):
+                return {"message": "", "error": "Payment required. Buy a Stripe pack (10 uses) first."}
             
             image_url = req.imageUrl if hasattr(req, 'imageUrl') else None
             service_name = "linkedin_post_with_image" if (req.image_base64 or image_url) else "linkedin_post"
@@ -453,9 +451,9 @@ def register_linkedin_handlers(agent, linkedin_service, ai_service, payment_serv
             if not req.user_id:
                 return {"error": "Authentication required"}
             
-            payment_status = await payment_service.check_user_payment_status(req.user_id, "ai_generate_post")
-            if not payment_status.get("has_paid"):
-                return {"error": "Payment required. Please pay Stripe or FET to use this service."}
+            need_pay = await payment_service.require_credit(req.user_id)
+            if need_pay:
+                return {"error": need_pay}
             
             include_image = req.include_image or req.includeImage or False
             
@@ -496,6 +494,7 @@ def register_linkedin_handlers(agent, linkedin_service, ai_service, payment_serv
                         post_id = save_result.data[0]["id"]
                 except Exception as save_error:
                     pass
+            await payment_service.consume_credit(req.user_id, "ai_generate_post")
             
             # Handle scheduling - always create schedule if schedule/scheduled_at provided
             schedule_id = None
@@ -537,6 +536,7 @@ def register_linkedin_handlers(agent, linkedin_service, ai_service, payment_serv
                 "imageUrl": final_image_url,
                 "image": final_image_url,
                 "image_url": final_image_url,
+                "image_error": result.get("image_error"),
                 "postId": post_id,
                 "schedule_id": schedule_id,  # Will be None if not scheduled, but field always present
                 "review_link": review_link,  # Will be None if not scheduled/approved, but field always present
