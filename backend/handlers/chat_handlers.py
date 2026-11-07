@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import re
 from datetime import datetime
 from typing import Callable, Optional
 
@@ -24,7 +26,31 @@ from protocols.influenone_cards import (
     send_menu,
     url_form,
 )
-from protocols.interactive_cards import normalize_card_selection
+from protocols.interactive_cards import normalize_card_selection, strip_mention_prefix
+from services.ai.asi1 import ASI1Error
+from services.ai.asi1 import chat as asi1_chat
+
+NATURAL_CHAT_SYSTEM = (
+    "You are InfluenOne, a LinkedIn content-automation agent on ASI:One. "
+    "Reply naturally, warmly and concisely in the user's own language (English, Hindi or Hinglish). "
+    "You help creators turn a topic or an article URL into a LinkedIn post with a graphic. "
+    "Post creation costs $4.99 per post (Stripe) and happens through the Generate post / URL to "
+    "post buttons — never write the full post in chat; invite the user to tap those buttons. "
+    "Small talk, feature questions, pricing and help are free."
+)
+
+GREETINGS = {
+    "hi", "hii", "hiii", "hey", "heyy", "hello", "helo",
+    "namaste", "namaskar", "help", "menu", "start",
+}
+
+_CREATE_VERBS = r"(?:write|create|make|generate|draft|compose|banao|likho|bana)"
+GENERATE_INTENT_RE = re.compile(
+    rf"\bpost\b.{{0,60}}?\b{_CREATE_VERBS}\b"
+    rf"|\b{_CREATE_VERBS}\b.{{0,60}}?\bpost\b"
+    rf"|\b(?:bana|likh)\b.{{0,40}}?\bpost\b",
+    re.IGNORECASE,
+)
 
 _fulfill: Optional[Callable] = None
 
@@ -118,6 +144,34 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
 
     _fulfill = fulfill
 
+    async def _natural_chat(ctx: Context, sender: str, text: str) -> None:
+        """Free-form conversation with ASI:One. No payment involved."""
+        session_id = str(ctx.session)
+        history_key = f"chat_history:{sender}:{session_id}"
+        try:
+            history = json.loads(ctx.storage.get(history_key) or "[]")
+        except Exception:
+            history = []
+        if not isinstance(history, list):
+            history = []
+        messages: list[dict[str, str]] = [{"role": "system", "content": NATURAL_CHAT_SYSTEM}]
+        messages.extend(turn for turn in history[-6:] if isinstance(turn, dict))
+        messages.append({"role": "user", "content": text})
+        try:
+            reply = await asi1_chat(messages, temperature=0.7, max_tokens=600)
+        except ASI1Error:
+            await ctx.send(sender, create_text_chat("ASI:One is busy right now. Please try again in a moment."))
+            return
+        except Exception:
+            await ctx.send(sender, create_text_chat("Something went wrong. Please try again."))
+            return
+        history = (history + [
+            {"role": "user", "content": text},
+            {"role": "assistant", "content": reply},
+        ])[-10:]
+        ctx.storage.set(history_key, json.dumps(history))
+        await ctx.send(sender, create_text_chat(reply))
+
     @chat_proto.on_message(ChatMessage)
     async def handle_chat_message(ctx: Context, sender: str, msg: ChatMessage):
         msg_key = f"{sender}:{msg.msg_id}"
@@ -159,7 +213,8 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
             sel = normalize_card_selection(text, KNOWN_ACTIONS)
             action = str(sel.get("action") or "").strip()
 
-            if action in {"menu", "hello", "hi", "start"} or text.lower() in {"hi", "hello", "help", "menu", "start"}:
+            plain = strip_mention_prefix(text).lower().rstrip("!.,? ")
+            if action in {"menu", "hello", "hi", "start"} or plain in GREETINGS:
                 await send_menu(ctx, sender)
                 return
 
@@ -236,23 +291,32 @@ def register_chat_protocol(agent, chat_proto, ai_service, payment_service=None):
                 await send_menu(ctx, sender, "Draft saved. Open the website to publish to LinkedIn.")
                 return
 
-            if text.lower() in {"paid", "done", "payment done"}:
+            if text.lower() in {"paid", "payment done"}:
                 await request_stripe_payment(ctx, sender)
                 return
 
             looks_url = text.lower().startswith("http://") or text.lower().startswith("https://")
-            if await _need_pay(ctx, sender, paid):
-                if looks_url:
+            # URL → URL-to-post flow (post creation, so payment applies).
+            if looks_url:
+                if await _need_pay(ctx, sender, paid):
                     stash_pending(ctx, sender, "submit_url", url=text, language="en")
                     await request_stripe_payment(ctx, sender, service="asi1_url")
-                else:
-                    stash_pending(ctx, sender, "submit_generate", topic=text, language="en")
-                    await request_stripe_payment(ctx, sender, service="asi1_generate")
-                return
-            if looks_url:
+                    return
                 await _run_url(ctx, sender, text, "en")
                 return
-            await _run_generate(ctx, sender, text, "en")
+            # Explicit "write a post about X" intent → open the generate form (free).
+            # Payment is only requested when the form is actually submitted.
+            if GENERATE_INTENT_RE.search(text):
+                await send_card(
+                    ctx,
+                    sender,
+                    "Great topic! Confirm or edit it in the form — ASI:One writes the post ($4.99, charged on submit).",
+                    card_kind="form",
+                    card_payload=generate_form(),
+                )
+                return
+            # Plain text → natural conversation. Free — no payment gate.
+            await _natural_chat(ctx, sender, text)
 
     @chat_proto.on_message(ChatAcknowledgement)
     async def handle_ack(ctx: Context, sender: str, msg: ChatAcknowledgement):

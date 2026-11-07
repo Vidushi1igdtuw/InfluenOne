@@ -24,6 +24,17 @@ CARD_PAYLOAD_MAX_BYTES = 60_000
 
 _MENTION_PREFIX_RE = re.compile(r"^(?:@\S+\s+)+")
 
+# Button-label phrases ASI:One may send back as plain text instead of JSON.
+LABEL_ALIASES = {
+    "looks good": "approve_post",
+    "approve": "approve_post",
+    "reject": "regenerate",
+}
+
+
+def strip_mention_prefix(text: str) -> str:
+    return _MENTION_PREFIX_RE.sub("", (text or "").strip()).strip()
+
 
 def card_payload_within_limit(card_payload: dict[str, Any]) -> bool:
     try:
@@ -118,10 +129,27 @@ def parse_card_selection(text: str, known_actions: set[str] | None = None) -> di
         if isinstance(data, dict):
             return data
     if known_actions:
-        lowered = raw.lower()
+        lowered = strip_mention_prefix(raw).lower().replace("_", " ")
+        # Word-boundary matching so "payment" does not trigger "pay",
+        # and "generate post" (button label) matches action "generate_post".
+        matches: list[tuple[int, int, str]] = []
         for action in known_actions:
-            if action and action in lowered:
-                return {"action": action}
+            action_l = action.lower()
+            best: tuple[int, int] | None = None
+            for variant in {action_l, action_l.replace("_", " ")}:
+                if not variant:
+                    continue
+                found = re.search(rf"\b{re.escape(variant)}\b", lowered)
+                if found and (best is None or found.start() < best[0]):
+                    best = (found.start(), len(variant))
+            if best is not None:
+                matches.append((best[0], -best[1], action))
+        if matches:
+            matches.sort()
+            return {"action": matches[0][2]}
+        for label, alias_action in LABEL_ALIASES.items():
+            if alias_action in known_actions and re.search(rf"\b{re.escape(label)}\b", lowered):
+                return {"action": alias_action}
     return {}
 
 
